@@ -54,7 +54,7 @@ async def redis_update_handler():
                 print('user :', user)
                 for line in lines[row["line"]]:
                     print(line, user, user == line)
-                if user in queue:
+                if user in queue and len(queue) > 0:
                     queue.remove(str(user))
                 user = queue[0]
                 print('line: ', lines[row["line"]])
