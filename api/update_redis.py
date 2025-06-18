@@ -48,7 +48,7 @@ async def redis_update_handler():
             if timestamp - int(row["time"]) > 240 and timestamp - int(row["time"]) < 1000:
                 print('key: ', type(key))
                 print('secs: ', int(row["time"]) - timestamp)
-                print('queue: ', lines[row["line"]], len()
+                print('queue: ', lines[row["line"]])
                 user = row["user"]
                 queue = lines[row["line"]]
                 print('queue: ', lines[row["line"]], len(queue))
