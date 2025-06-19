@@ -79,7 +79,7 @@ async def change_user(chat, user):
       data = {"CHAT_ID": chat, "TRANSFER_ID": user}
       try:
           print("change user: posting..")
-          response = await client.post('https://bitrix.abramovteam.ru/rest/1/0bwuq2j93zpaxkie/imopenlines.operator.transfer', data=data)
+          response = await client.post(api + 'imopenlines.operator.transfer', data=data)
           response = response.json()
           print('transfer response: ', response)
       except Exception as e:
@@ -88,13 +88,13 @@ async def change_user(chat, user):
 async def get_lines(timestamp):
     async with httpx.AsyncClient() as client:
       lines = {}
-      response = await client.post('https://bitrix.abramovteam.ru/rest/1/0bwuq2j93zpaxkie/imopenlines.config.list.get')
+      response = await client.post(api + 'imopenlines.config.list.get')
       json = response.json()
       print('execution time: ', timestamp - time.time())
       for line in json["result"]:
           #print(line)
           data = {"CONFIG_ID": line["ID"]}
-          response = await client.post('https://bitrix.abramovteam.ru/rest/1/0bwuq2j93zpaxkie/imopenlines.config.get', data=data)
+          response = await client.post(api + 'imopenlines.config.get', data=data)
           result = response.json()["result"]
           lines[result["ID"]] = result["QUEUE"]
           print(lines)
