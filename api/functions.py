@@ -53,7 +53,7 @@ def chat_code(request):
 async def chat_id(code):
   async with httpx.AsyncClient() as client:
     data = {"USER_CODE": code}
-    response = await client.post('https://bitrix.abramovteam.ru/rest/1/0bwuq2j93zpaxkie/imopenlines.dialog.get', data=data)
+    response = await client.post(api +' imopenlines.dialog.get', data=data)
     response = response.json()
     print('chatId: ', response)
     return {"chat": str(response["result"]["id"]), "user": str(response["result"]["owner"])}
@@ -80,7 +80,7 @@ async def add_handler(request):
   code = chat_code(request)
   data = await chat_id(code)
   chat = data["chat"]
-  text = re.search('\[message\]\[text\]=(.+?)&', request)
+  text = re.search('\[message\]\[text\]=(.+?)&', request).lower()
   emojis = emoji.emoji_list(text)
   for i in slist:
     if text.find(i) > -1:
