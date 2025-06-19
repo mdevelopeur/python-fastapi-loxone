@@ -25,6 +25,7 @@ async def hook_handler(request):
   request = unquote(request)
   event = re.search('event=(.+?)&', request).group(1)
   print(type(event), event)
+  print(slist)
   #event = true if event
   #chat = re.search('\[message\]\[chat_id\]=(.+?)&', request).group(1)
   #user = re.search('\[message\]\[user_id\]=(.+?)&', request).group(1)
@@ -82,6 +83,8 @@ async def add_handler(request):
   chat = data["chat"]
   text = re.search('\[message\]\[text\]=(.+?)&', request).lower()
   emojis = emoji.emoji_list(text)
+  for i in emojis:
+    print(i["emoji"])
   for i in slist:
     if text.find(i) > -1:
       emojis = False
