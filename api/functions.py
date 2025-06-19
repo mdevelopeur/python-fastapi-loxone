@@ -84,9 +84,10 @@ async def add_handler(request):
   text = re.search('\[message\]\[text\]=(.+?)&', request).group(1).lower()
   #if text
   emojis = emoji.emoji_list(text)
-  emojis = len(emojis) > 0
+  
   for i in emojis:
     print(i["emoji"])
+  emojis = len(emojis) > 0
   for i in slist:
     if text.find(i) > -1:
       emojis = True
