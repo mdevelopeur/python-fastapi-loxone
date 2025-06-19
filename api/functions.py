@@ -7,11 +7,13 @@ import asyncpg
 import time
 import os
 import redis
+import emoji
 from dotenv import load_dotenv
 
 load_dotenv(dotenv_path=".env")
-api = os.getenv("api")
+api = os.getenv("api").split(',')
 connection_string = os.getenv("postgresql")
+slist = os.getenv("list")
 #connection_string = 'postgresql://neondb_owner:npg_rzqOTvaJiP01@ep-frosty-morning-a2z2rgqi-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require'
 #connection_string = 'postgresql://neondb_owner:npg_ZEKV2AOWjyp9@ep-raspy-rice-a26lcgy9-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require'
 load_dotenv(dotenv_path=".env.local")
@@ -78,14 +80,21 @@ async def add_handler(request):
   code = chat_code(request)
   data = await chat_id(code)
   chat = data["chat"]
-  
+  text = re.search('\[message\]\[text\]=(.+?)&', request)
+  emojis = emoji.emoji_list(text)
+  for i in slist:
+    if text.find(i) > -1:
+      emojis = False
+      break
+  #emojis = emoji.emoji_list(text)
   #chat = re.search('\[message\]\[chat_id\]=(.+?)&', request)
   user = re.search('\[message\]\[user_id\]=(.+?)&', request)
   print('message user: ', user, data["user"] == str(user))
   if user:
     user = user.group(1)
-  if data["user"] == str(user):
+  if data["user"] == str(user) or emojis:
     await delete_chat(chat)
+    
   else:
     ##code = chat_code(request)
     #data = await chat_id(code)
