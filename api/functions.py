@@ -54,7 +54,7 @@ def chat_code(request):
 async def chat_id(code):
   async with httpx.AsyncClient() as client:
     data = {"USER_CODE": code}
-    response = await client.post(api +' imopenlines.dialog.get', data=data)
+    response = await client.post(api +'imopenlines.dialog.get', data=data)
     response = response.json()
     print('chatId: ', response)
     return {"chat": str(response["result"]["id"]), "user": str(response["result"]["owner"])}
