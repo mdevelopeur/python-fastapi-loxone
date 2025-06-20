@@ -12,6 +12,7 @@ import redis
 
 load_dotenv(dotenv_path=".env")
 api = os.getenv("api")
+delay = int(os.getenv("delay"))
 connection_string = os.getenv("postgresql")
 load_dotenv(dotenv_path=".env.local")
 redis_url = os.getenv("REDIS_URL")
@@ -35,22 +36,15 @@ async def redis_update_handler():
     mget_time = int(round(time.time()*10000))
     output = pipeline.execute()
     print('pipeline execution time: ', int(round(time.time()*10000)) - mget_time)
-    #for row in output:
-        #row["id"] = 
     for row, key in zip(output, list):
             hgetall_time = int(round(time.time()*10000))
-            #row = dict(r.hgetall(key))
-            #print('hgetall time: ', int(round(time.time()*10000)) - hgetall_time)
-            #print(row)
-            #print('execution time: ', timestamp - time.time())
-            #print(timestamp - int(row["time"]))
-            #print('row time: ', row["time"])
-            if timestamp - int(row["time"]) > 240 and timestamp - int(row["time"]) < 1000:
+            user = row["user"]
+            queue = lines[row["line"]]
+            if timestamp - int(row["time"]) > delay and timestamp - int(row["time"]) < delay * 3 and len(queue) > 1:
                 print('key: ', type(key))
                 print('secs: ', int(row["time"]) - timestamp)
                 print('queue: ', lines[row["line"]])
-                user = row["user"]
-                queue = lines[row["line"]]
+                
                 print('queue: ', lines[row["line"]], len(queue))
                
                 print('user :', user)
