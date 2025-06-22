@@ -57,12 +57,14 @@ async def redis_update_handler():
                 print('line: ', lines[row["line"]])
                 print('user: ', user)
                 r.hset(key, mapping={"time": str(timestamp),"user": str(user), "line": str(row["line"])})
-                try:
-                    '''
-                    status = await get_status(user)
+                try: 
+                    status = True
+                    try:
+                        status = await get_status(user)
+                    except:
+                        status = True
                     if status:
-                    '''
-                    await change_user(key, user)
+                        await change_user(key, user)
                 except Exception as e:
                     print('call exception: ', e)
                 
@@ -98,7 +100,7 @@ async def get_lines(timestamp):
           print(lines)
           print('execution time: ', timestamp - int(time.time()))
       return lines
-''' 
+
 async def get_status(user):
     async with httpx.AsyncClient() as client:
         data = {"USER_ID": user}
@@ -109,4 +111,4 @@ async def get_status(user):
             return True
         else:
             return False 
-'''
+
