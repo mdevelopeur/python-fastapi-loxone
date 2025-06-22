@@ -12,7 +12,7 @@ import redis
 
 load_dotenv(dotenv_path=".env")
 api = os.getenv("api")
-delay = int(os.getenv("delay"))
+delay = int(os.getenv("delay"))*60
 connection_string = os.getenv("postgresql")
 load_dotenv(dotenv_path=".env.local")
 redis_url = os.getenv("REDIS_URL")
@@ -58,6 +58,10 @@ async def redis_update_handler():
                 print('user: ', user)
                 r.hset(key, mapping={"time": str(timestamp),"user": str(user), "line": str(row["line"])})
                 try:
+                    '''
+                    status = await get_status(user)
+                    if status:
+                    '''
                     await change_user(key, user)
                 except Exception as e:
                     print('call exception: ', e)
@@ -94,3 +98,15 @@ async def get_lines(timestamp):
           print(lines)
           print('execution time: ', timestamp - int(time.time()))
       return lines
+''' 
+async def get_status(user):
+    async with httpx.AsyncClient() as client:
+        data = {"USER_ID": user}
+        response = await client.post(api + 'timeman.status', data=data)
+        json = response.json()
+        status = json["result"]["STATUS"]
+        if status == "OPENED":
+            return True
+        else:
+            return False 
+'''
