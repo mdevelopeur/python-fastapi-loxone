@@ -61,7 +61,7 @@ async def redis_update_handler():
                     status = True
                     try:
                         status = await get_status(user)
-                    except:
+                    except Exception as e:
                         status = True
                     if status:
                         await change_user(key, user)
