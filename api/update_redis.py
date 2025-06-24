@@ -52,8 +52,8 @@ async def redis_update_handler():
                     print(line, user, user == line)
                 if (user in queue) and (len(queue) > 1):
                     print('queue len: ', len(queue) > 1)
-                    queue.remove(str(user))
-                user = queue[0]
+                    #queue.remove(str(user))
+                #user = queue[0]
                 print('line: ', lines[row["line"]])
                 print('user: ', user)
                 r.hset(key, mapping={"time": str(timestamp),"user": str(user), "line": str(row["line"])})
@@ -64,8 +64,13 @@ async def redis_update_handler():
                         print('status: ', status)
                     except Exception as e:
                         status = True
-                    if status:
-                        await change_user(key, user)
+                    if not status:
+                        if (user in queue) and (len(queue) > 1):
+                            #print('queue len: ', len(queue) > 1)
+                            queue.remove(str(user))
+                        status = await get_status(queue[0])
+                        if status:
+                            await change_user(key, user)
                 except Exception as e:
                     print('call exception: ', e)
                 
