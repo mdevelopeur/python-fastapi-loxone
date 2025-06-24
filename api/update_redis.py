@@ -1,5 +1,5 @@
 from urllib.parse import unquote
-from api.functions import delete_chat
+from api.functions import delete_chat, update_chat
 import httpx
 import re
 import os
@@ -70,6 +70,7 @@ async def redis_update_handler():
                             queue.remove(str(user))
                         status = await get_status(queue[0])
                         if status:
+                            await update_user(key, row["line"], user)
                             await change_user(key, user)
                 except Exception as e:
                     print('call exception: ', e)
