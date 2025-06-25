@@ -37,17 +37,11 @@ async def redis_update_handler():
     output = pipeline.execute()
     print('pipeline execution time: ', int(round(time.time()*10000)) - mget_time)
     for row, key in zip(output, list):
+            print("row: ", key, row)
             hgetall_time = int(round(time.time()*10000))
             user = row["user"]
             queue = lines[row["line"]]
             if timestamp - int(row["time"]) > delay and timestamp - int(row["time"]) < delay * 3 and len(queue) > 1:
-                print('key: ', type(key))
-                print('secs: ', int(row["time"]) - timestamp)
-                print('queue: ', lines[row["line"]])
-                
-                print('queue: ', lines[row["line"]], len(queue))
-               
-                print('user :', user)
                 for line in lines[row["line"]]:
                     print(line, user, user == line)
                 if (user in queue) and (len(queue) > 1):
