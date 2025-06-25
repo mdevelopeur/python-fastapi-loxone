@@ -64,7 +64,7 @@ async def redis_update_handler():
                             queue.remove(str(user))
                         status = await get_status(queue[0])
                         if status:
-                            await update_user(key, row["line"], user)
+                            await update_chat(key, row["line"], user)
                             await change_user(key, user)
                 except Exception as e:
                     print('call exception: ', e)
