@@ -62,6 +62,7 @@ async def redis_update_handler():
                         if (user in queue) and (len(queue) > 1):
                             #print('queue len: ', len(queue) > 1)
                             queue.remove(str(user))
+                        user = queue[0]
                         status = await get_status(queue[0])
                         if status:
                             await update_chat(key, row["line"], user)
