@@ -41,7 +41,7 @@ async def redis_update_handler():
             hgetall_time = int(round(time.time()*10000))
             user = row["user"]
             queue = lines[row["line"]]
-            if timestamp - int(row["time"]) > delay and timestamp - int(row["time"]) < delay * 3 and len(queue) > 1:
+            if timestamp - int(row["time"]) > delay and timestamp - int(row["time"]) < delay * 100 and len(queue) > 1:
                 for line in lines[row["line"]]:
                     print(line, user, user == line)
                 if (user in queue) and (len(queue) > 1):
