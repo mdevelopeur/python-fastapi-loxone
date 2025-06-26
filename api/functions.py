@@ -22,7 +22,7 @@ redis_url = os.getenv("REDIS_URL")
 #connection_string = 'postgresql://neondb_owner:npg_ZEKV2AOWjyp9@ep-raspy-rice-a26lcgy9-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require'
 
 async def hook_handler(request):
-  request = unquote(request).strip().replace("\","")
+  request = unquote(request).strip().replace("\\","")
   event = re.search('event=(.+?)&', request).group(1)
   print(type(event), event)
   print(slist)
