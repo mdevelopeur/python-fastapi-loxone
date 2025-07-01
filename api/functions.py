@@ -82,7 +82,7 @@ async def add_handler(request):
   data = await chat_id(code)
   chat = data["chat"]
   print("message text: ")
-  text = re.search('\[message\]\[text\]=(.+?)&', request).group(1).lower()
+  text = re.search('\[message\]\[text\]=(.+?)&', request, re.DOTALL).group(1).lower()
   print(text)
   #if text
   emojis = emoji.emoji_list(text)
