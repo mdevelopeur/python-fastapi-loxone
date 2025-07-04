@@ -41,7 +41,7 @@ async def redis_update_handler():
     for row, key in zip(output, list):
             print("row: ", key, row)
             hgetall_time = int(round(time.time()*10000))
-            user = row["user"]
+            
             queue = lines[row["line"]]
             if timestamp - int(row["time"]) > delay and timestamp - int(row["time"]) < delay * 100 and len(queue) > 1:
                 statuses = {}
@@ -50,10 +50,15 @@ async def redis_update_handler():
                     statuses[user] = status 
                 print(statuses)
                 if False in statuses:
-                    for key, value in statuses.items():
-                        
-                
-                r.hset(key, mapping={"time": str(timestamp),"user": str(user), "line": str(row["line"])})
+                    for user, status in statuses.items():
+                        if status and user != row["user"]:
+                            await update_chat(key, row["line"], user)
+                            await change_user(key, user)                            
+                else:
+                    await update_chat(key, row["line"], row["origin"])
+                    await change_user(key, row["origin"])                                                
+                #r.hset(key, mapping={"time": str(timestamp),"user": str(user), "line": str(row["line"])})
+                '''
                 try: 
                     status = True
                     try:
@@ -72,7 +77,7 @@ async def redis_update_handler():
                             await change_user(key, user)
                 except Exception as e:
                     print('call exception: ', e)
-                
+                '''
 async def change_user(chat, user):
     print("change user: started..")
     async with httpx.AsyncClient() as client:
