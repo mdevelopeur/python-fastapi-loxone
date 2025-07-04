@@ -55,7 +55,7 @@ async def redis_update_handler():
                         if status and user != row["user"]:
                             await update_chat(key, row["line"], user)
                             await change_user(key, user)                            
-                elif row["origin"]:
+                elif "origin" in row:
                     await update_chat(key, row["line"], row["origin"])
                     await change_user(key, row["origin"])                                                
                 #r.hset(key, mapping={"time": str(timestamp),"user": str(user), "line": str(row["line"])})
