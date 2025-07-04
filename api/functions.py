@@ -116,10 +116,10 @@ async def finish_handler(request):
     await delete_chat(chat.group(1))
 
 async def start_handler(request):
-  code = chat_code(request)
+  chat = re.search('\[connector\]\[chat_id\]=(.+?)&', request).group(1)
   r = redis.Redis.from_url(redis_url)
   timestamp = str(int(time.time()))
-  r.hset('unsorted', timestamp + str(random.randint(0,100)), code)
+  r.hset('unsorted', timestamp + str(random.randint(0,100)), chat)
   
 async def delete_chat(chat):
   pool = await asyncpg.create_pool(connection_string)
