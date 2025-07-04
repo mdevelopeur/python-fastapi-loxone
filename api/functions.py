@@ -7,6 +7,7 @@ import time
 import os
 import redis
 import emoji
+import random 
 from dotenv import load_dotenv
 
 load_dotenv(dotenv_path=".env")
@@ -116,7 +117,9 @@ async def finish_handler(request):
 
 async def start_handler(request):
   code = chat_code(request)
-  data = await chat_id(code)
+  r = redis.Redis.from_url(redis_url)
+  timestamp = str(int(time.time()))
+  r.hset('unsorted', timestamp + random.randint(0,100), code)
   
 async def delete_chat(chat):
   pool = await asyncpg.create_pool(connection_string)
