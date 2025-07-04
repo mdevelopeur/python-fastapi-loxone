@@ -44,14 +44,15 @@ async def redis_update_handler():
             user = row["user"]
             queue = lines[row["line"]]
             if timestamp - int(row["time"]) > delay and timestamp - int(row["time"]) < delay * 100 and len(queue) > 1:
-                for line in lines[row["line"]]:
-                    print(line, user, user == line)
-                if (user in queue) and (len(queue) > 1):
-                    print('queue len: ', len(queue) > 1)
-                    #queue.remove(str(user))
-                #user = queue[0]
-                print('line: ', lines[row["line"]])
-                print('user: ', user)
+                statuses = {}
+                for user in queue:
+                    status = await get_status(user)
+                    statuses[user] = status 
+                print(statuses)
+                if False in statuses:
+                    for key, value in statuses.items():
+                        
+                
                 r.hset(key, mapping={"time": str(timestamp),"user": str(user), "line": str(row["line"])})
                 try: 
                     status = True
