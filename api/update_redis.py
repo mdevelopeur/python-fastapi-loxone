@@ -132,7 +132,7 @@ async def handle_unsorted():
             r.hdel('unsorted', key)
             print("origin set: ", chat, owner)
         except Exception as e:
-            print(f"{unsorted[key]} has not been deleted")
+            print(f"{unsorted[key]} has not been deleted for {e}")
             
 async def get_owner(chat):
     async with httpx.AsyncClient() as client:
