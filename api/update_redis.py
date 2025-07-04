@@ -51,6 +51,7 @@ async def redis_update_handler():
                 print(statuses)
                 if False in statuses:
                     for user, status in statuses.items():
+                        
                         if status and user != row["user"]:
                             await update_chat(key, row["line"], user)
                             await change_user(key, user)                            
