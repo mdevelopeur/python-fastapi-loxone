@@ -136,7 +136,7 @@ async def handle_unsorted():
             
 async def get_owner(chat):
     async with httpx.AsyncClient() as client:
-        data = {"CHAT_ID": code}
+        data = {"CHAT_ID": chat}
         response = await client.post(api +'imopenlines.dialog.get', data=data)
         response = response.json()
         return(response["result"]["owner"])
