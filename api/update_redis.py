@@ -25,10 +25,17 @@ async def redis_update_handler():
     statement = "SELECT * FROM chats"
     keys = r.keys()
     list = []
+    unsorted = None
     pipeline = r.pipeline()
     for key in keys:
+        if key == 'unsorted':
+            unsorted = r.hgetall(key)
+            try:
+                await handle_unsorted(unsorted)
+            except Exception as e:
+                print('handle unsorted exception: ', e)
         #list.append(f"{key}-time, {key}-user, {key}-line")
-        if key.find('-') == -1:
+        elif key.find('-') == -1:
             list.append(key)
             pipeline.hgetall(key)
     string = "MGET " + ', '.join(list)
@@ -70,10 +77,6 @@ async def redis_update_handler():
                 except Exception as e:
                     print('call exception: ', e)
                 
-                #await conn.execute(f"UPDATE chats SET time = '{str(timestamp)}', user_id = '{str(user)}' WHERE id = '{row["id"]}'")
-            #elif timestamp - int(row["time"]) < 400:
-               # r.delete(
-    
 async def change_user(chat, user):
     print("change user: started..")
     async with httpx.AsyncClient() as client:
@@ -114,3 +117,6 @@ async def get_status(user):
         else:
             return False 
 
+async def handle_unsorted(unsorted):
+    print(unsorted)
+    
