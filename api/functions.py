@@ -2,7 +2,6 @@ from urllib.parse import unquote
 import httpx
 import re
 import asyncio
-#import aioredis
 import asyncpg
 import time
 import os
@@ -14,21 +13,14 @@ load_dotenv(dotenv_path=".env")
 api = os.getenv("api")
 connection_string = os.getenv("postgresql")
 slist = os.getenv("list").split(',')
-#connection_string = 'postgresql://neondb_owner:npg_rzqOTvaJiP01@ep-frosty-morning-a2z2rgqi-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require'
-#connection_string = 'postgresql://neondb_owner:npg_ZEKV2AOWjyp9@ep-raspy-rice-a26lcgy9-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require'
 load_dotenv(dotenv_path=".env.local")
 redis_url = os.getenv("REDIS_URL")
-#connection_string = 'postgresql://neondb_owner:npg_rzqOTvaJiP01@ep-frosty-morning-a2z2rgqi-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require'
-#connection_string = 'postgresql://neondb_owner:npg_ZEKV2AOWjyp9@ep-raspy-rice-a26lcgy9-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require'
 
 async def hook_handler(request):
   request = unquote(request).strip().replace("\\","")
   event = re.search('event=(.+?)&', request).group(1)
   print(type(event), event)
   print(slist)
-  #event = true if event
-  #chat = re.search('\[message\]\[chat_id\]=(.+?)&', request).group(1)
-  #user = re.search('\[message\]\[user_id\]=(.+?)&', request).group(1)
   if event == 'ONSESSIONFINISH':
     try:
       await finish_handler(request)
@@ -105,11 +97,7 @@ async def add_handler(request):
     await delete_chat(chat)
     
   else:
-    ##code = chat_code(request)
-    #data = await chat_id(code)
-    
     print('add_handler: ')
-    #chat = re.search('\[chat_id\]=(.+?)&', request).group(1)
     print('chat: ', chat)
     line = re.search('\[connector\]\[line_id\]=(.+?)&', request).group(1)
     print('line: ', line)
@@ -132,14 +120,9 @@ async def delete_chat(chat):
   print(dres)
   statement = f"UPDATE chats SET active = 'N' WHERE id = '{chat}'"
   print(statement)
-  #if chat == '79':
-    #statement = "DELETE FROM chats WHERE id = '79'"
   async with pool.acquire() as conn:
     response = await conn.execute(statement)
     #response = await conn.fetchall("SELECT * FROM chats")
     print(response)
   await pool.close()
   print('chat ', chat, ' deleted')
-#def find(array, term):
-  #for i in array:
-    #if 
