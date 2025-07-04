@@ -119,7 +119,7 @@ async def start_handler(request):
   code = chat_code(request)
   r = redis.Redis.from_url(redis_url)
   timestamp = str(int(time.time()))
-  r.hset('unsorted', timestamp + random.randint(0,100), code)
+  r.hset('unsorted', timestamp + str(random.randint(0,100)), code)
   
 async def delete_chat(chat):
   pool = await asyncpg.create_pool(connection_string)
