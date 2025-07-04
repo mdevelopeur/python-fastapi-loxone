@@ -1,5 +1,5 @@
 from urllib.parse import unquote
-from api.functions import delete_chat, update_chat
+from api.functions import delete_chat, update_chat, chat_id
 import httpx
 import re
 import os
@@ -29,12 +29,7 @@ async def redis_update_handler():
     pipeline = r.pipeline()
     for key in keys:
         if key == 'unsorted':
-            unsorted = r.hgetall(key)
-            try:
-                await handle_unsorted(unsorted)
-            except Exception as e:
-                print('handle unsorted exception: ', e)
-        #list.append(f"{key}-time, {key}-user, {key}-line")
+            await handle_unsorted()
         elif key.find('-') == -1:
             list.append(key)
             pipeline.hgetall(key)
@@ -117,6 +112,14 @@ async def get_status(user):
         else:
             return False 
 
-async def handle_unsorted(unsorted):
+async def handle_unsorted():
+    r = redis.Redis.from_url(redis_url, decode_responses=True)
+    unsorted = r.hgetall('unsorted')
     print(unsorted)
-    
+    for key in unsorted.keys():
+        try:
+            data = await chat_id(unsorted[key])       
+            r.hset(data['chat'], 'origin', data['user'])
+            r.hdel('unsorted', key)
+        except Exception as e:
+            print(f"{unsorted[key]} has not been deleted")
