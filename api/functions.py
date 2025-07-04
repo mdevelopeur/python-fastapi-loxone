@@ -31,7 +31,12 @@ async def hook_handler(request):
       await add_handler(request)
     except Exception as e:
       print(e)  
-    
+  elif event == 'ONSESSIONSTART': 
+    try:
+       await start_handler(request)
+    except Exception as e:
+      print(e)  
+      
 def chat_code(request):
   data = {}
   request = unquote(request)
@@ -78,7 +83,6 @@ async def add_handler(request):
   print(text)
   #if text
   emojis = emoji.emoji_list(text)
-  
   for i in emojis:
     print(i["emoji"])
   emojis = len(emojis) > 0
@@ -87,8 +91,6 @@ async def add_handler(request):
       emojis = True
       break
     
-  #emojis = emoji.emoji_list(text)
-  #chat = re.search('\[message\]\[chat_id\]=(.+?)&', request)
   user = re.search('\[message\]\[user_id\]=(.+?)&', request)
   print('message user: ', user, data["user"] == str(user))
   if user:
@@ -111,7 +113,11 @@ async def finish_handler(request):
   chat = re.search('\[chat_id\]=(.+?)&', request)
   if chat:
     await delete_chat(chat.group(1))
-    
+
+async def start_handler(request):
+  code = chat_code(request)
+  data = await chat_id(code)
+  
 async def delete_chat(chat):
   pool = await asyncpg.create_pool(connection_string)
   r = redis.Redis.from_url(redis_url)
