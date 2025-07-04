@@ -125,8 +125,17 @@ async def handle_unsorted():
     print(unsorted)
     for key in unsorted.keys():
         try:
-            data = await chat_id(unsorted[key])       
-            r.hset(data['chat'], 'origin', data['user'])
+            chat = unsorted[key]
+            owner = await get_owner(chat)
+            r.hset(chat, 'origin', owner)
             r.hdel('unsorted', key)
+            print("origin set: ", chat, owner)
         except Exception as e:
             print(f"{unsorted[key]} has not been deleted")
+            
+async def get_owner(chat):
+    async with httpx.AsyncClient() as client:
+        data = {"CHAT_ID": code}
+        response = await client.post(api +'imopenlines.dialog.get', data=data)
+        response = response.json()
+        return(response["result"]["owner"])
