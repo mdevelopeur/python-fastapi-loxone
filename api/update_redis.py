@@ -127,6 +127,7 @@ async def handle_unsorted():
         try:
             chat = unsorted[key]
             owner = await get_owner(chat)
+            print(owner)
             r.hset(chat, 'origin', owner)
             r.hdel('unsorted', key)
             print("origin set: ", chat, owner)
