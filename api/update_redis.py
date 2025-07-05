@@ -39,8 +39,9 @@ async def redis_update_handler():
     output = pipeline.execute()
     print('pipeline execution time: ', int(round(time.time()*10000)) - mget_time)
     for row, key in zip(output, list):
-            print("row: ", key, row, row["line"] is None)
+            print("row: ", key, row)
             if "line" not in row:
+                print("skipped")
                 continue
             print(lines)
             #hgetall_time = int(round(time.time()*10000))        
