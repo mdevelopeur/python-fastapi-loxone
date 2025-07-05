@@ -51,7 +51,7 @@ async def update(request: Request):
         await redis_update_handler()
     except Exception as e:
         print(e)
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        tb_list = traceback.extract_tb(exc_traceback)
-        line_number = tb_list[-1].lineno  # Get the line number of the error
-        print(f"Exception occurred at line: {line_number}")
+        #exc_type, exc_value, exc_traceback = sys.exc_info()
+        #tb_list = traceback.extract_tb(exc_traceback)
+        #line_number = tb_list[-1].lineno  # Get the line number of the error
+        #print(f"Exception occurred at line: {line_number}")
