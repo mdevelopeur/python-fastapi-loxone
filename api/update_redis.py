@@ -47,7 +47,8 @@ async def redis_update_handler():
             #hgetall_time = int(round(time.time()*10000))        
             queue = lines[row["line"]]
             print(queue)
-            if timestamp - int(row["time"]) > delay and timestamp - int(row["time"]) < delay * 100 and len(queue) > 1:
+            #if timestamp - int(row["time"]) > delay and timestamp - int(row["time"]) < delay * 100 and len(queue) > 1:
+            if "origin" in row and len(queue) > 1:
                 statuses = {}
                 print(statuses, "!")
                 for user in queue:
@@ -131,20 +132,23 @@ async def handle_unsorted():
     for key in unsorted.keys():
         try:
             chat = unsorted[key]
-            owner = await get_owner(chat)
+            data = await get_data(chat)
+            line = data["entity_id"].split('|')[1]
+            owner = data["owner"]
             print(owner)
             if int(owner) != 0:
                hash = r.hget(chat)
                print(hash)
-               r.hset(chat, 'origin', owner)
+               r.hset(chat, mapping={"line": line, "user": owner, "origin": owner})
                r.hdel('unsorted', key)
                print("origin set: ", chat, owner)
         except Exception as e:
             print(f"{unsorted[key]} has not been deleted for {e}")
             
-async def get_owner(chat):
+async def get_data(chat):
     async with httpx.AsyncClient() as client:
         data = {"CHAT_ID": chat}
         response = await client.post(api +'imopenlines.dialog.get', data=data)
         response = response.json()
-        return(response["result"]["owner"])
+        
+        return(response["result"])
