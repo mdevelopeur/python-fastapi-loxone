@@ -40,8 +40,9 @@ async def redis_update_handler():
     print('pipeline execution time: ', int(round(time.time()*10000)) - mget_time)
     for row, key in zip(output, list):
             print("row: ", key, row)
-            hgetall_time = int(round(time.time()*10000))
-            
+            if row["line"] is None:
+                continue
+            hgetall_time = int(round(time.time()*10000))        
             queue = lines[row["line"]]
             if timestamp - int(row["time"]) > delay and timestamp - int(row["time"]) < delay * 100 and len(queue) > 1:
                 statuses = {}
@@ -128,9 +129,10 @@ async def handle_unsorted():
             chat = unsorted[key]
             owner = await get_owner(chat)
             print(owner)
-            r.hset(chat, 'origin', owner)
-            r.hdel('unsorted', key)
-            print("origin set: ", chat, owner)
+            if int(owner) != 0:
+               r.hset(chat, 'origin', owner)
+               r.hdel('unsorted', key)
+               print("origin set: ", chat, owner)
         except Exception as e:
             print(f"{unsorted[key]} has not been deleted for {e}")
             
