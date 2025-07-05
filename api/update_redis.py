@@ -42,10 +42,12 @@ async def redis_update_handler():
             print("row: ", key, row, row["line"] is None)
             if "line" not in row:
                 continue
+            print(lines)
             hgetall_time = int(round(time.time()*10000))        
             queue = lines[row["line"]]
             if timestamp - int(row["time"]) > delay and timestamp - int(row["time"]) < delay * 100 and len(queue) > 1:
                 statuses = {}
+                print(statuses)
                 for user in queue:
                     status = await get_status(user)
                     statuses[user] = status 
