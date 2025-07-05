@@ -29,7 +29,8 @@ async def hook_handler(request):
       print(e)
   elif event == 'ONOPENLINEMESSAGEADD':
     try:
-      await add_handler(request)
+      #await add_handler(request)
+      print("message skipped")
     except Exception as e:
       print(e)  
   elif event == 'ONSESSIONSTART': 
