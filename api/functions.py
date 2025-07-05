@@ -96,8 +96,8 @@ async def add_handler(request):
   print('message user: ', user, data["user"] == str(user))
   if user:
     user = user.group(1)
-  if data["user"] == str(user) or emojis:
-    await delete_chat(chat)
+  #if data["user"] == str(user) or emojis:
+    #await delete_chat(chat)
     
   else:
     print('add_handler: ')
