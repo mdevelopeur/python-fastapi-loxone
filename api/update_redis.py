@@ -39,32 +39,36 @@ async def redis_update_handler():
     output = pipeline.execute()
     print('pipeline execution time: ', int(round(time.time()*10000)) - mget_time)
     for row, key in zip(output, list):
-            print("row: ", key, row)
+            #print("row: ", key, row)
             if "line" not in row:
                 print("skipped")
                 continue
-            print(lines)
+            #print(lines)
             #hgetall_time = int(round(time.time()*10000))        
             queue = lines[row["line"]]
-            print(queue)
+            #print(queue)
             #if timestamp - int(row["time"]) > delay and timestamp - int(row["time"]) < delay * 100 and len(queue) > 1:
             if "origin" in row and len(queue) > 1:
                 statuses = {}
-                print(statuses, "!")
+                #print(statuses, "!")
+                print(queue)
                 for user in queue:
                     status = await get_status(user)
                     statuses[user] = status 
                 print(statuses)
                 if False in statuses.values():
                     for user, status in statuses.items():
-                        print("#54: ", user, status)
+                        print("#54: ", user, status, row["user"])
                         if status and user != row["user"]:
                             await update_chat(key, row["line"], user)
-                            await change_user(key, user)                            
+                            await change_user(key, user)
+                        
                 elif "origin" in row:
                     if row["user"] != row["origin"]:
                         await update_chat(key, row["line"], row["origin"])
-                        await change_user(key, row["origin"])                                                
+                        await change_user(key, row["origin"]) 
+                    else:
+                        print("user is origin")
                 #r.hset(key, mapping={"time": str(timestamp),"user": str(user), "line": str(row["line"])})
                 '''
                 try: 
