@@ -57,6 +57,9 @@ async def update(request: Request):
         #line_number = tb_list[-1].lineno  # Get the line number of the error
         #print(f"Exception occurred at line: {line_number}")
 @app.get('/api/chat')
-async def update(request: Request, chat: int):
-    data = await get_saved_chat(chat)
+async def update(request: Request, chat: str):
+    try:
+        data = await get_saved_chat(chat)
+    except Exception as e:
+        data = e
     return data
