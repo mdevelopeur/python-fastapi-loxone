@@ -41,7 +41,7 @@ async def redis_update_handler():
     for row, key in zip(output, list):
             #print("row: ", key, row)
             if "line" not in row:
-                print("skipped")
+                print("skipped for no line in the row")
                 continue
             #print(lines)
             #hgetall_time = int(round(time.time()*10000))        
@@ -51,7 +51,7 @@ async def redis_update_handler():
             if "origin" in row and len(queue) > 1:
                 statuses = {}
                 #print(statuses, "!")
-                print(queue)
+                print(queue, row)
                 for user in queue:
                     status = await get_status(user)
                     statuses[user] = status 
