@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 #from tgbot.main import tgbot
 from api.functions import hook_handler
 from api.check import update_handler
-from api.update_redis import redis_update_handler
+from api.update_redis import redis_update_handler, get_saved_chat
 from urllib.parse import unquote, urlparse
 
 app = FastAPI()
@@ -45,6 +45,7 @@ async def update(request: Request):
         await update_handler()
     except Exception as e:
         print(e)
+
 @app.get('/api/update-redis')
 async def update(request: Request):
     try:
@@ -55,3 +56,7 @@ async def update(request: Request):
         #tb_list = traceback.extract_tb(exc_traceback)
         #line_number = tb_list[-1].lineno  # Get the line number of the error
         #print(f"Exception occurred at line: {line_number}")
+@app.get('/api/chat')
+async def update(request: Request, chat: int):
+    data = await get_saved_chat(chat)
+    return data
