@@ -29,7 +29,7 @@ async def hook_handler(request):
       print(e)
   elif event == 'ONOPENLINEMESSAGEADD':
     try:
-      #await add_handler(request)
+      await add_handler(request)
       print("message skipped")
     except Exception as e:
       print(e)  
@@ -79,6 +79,7 @@ async def update_chat(chat, line, user):
 async def add_handler(request):
   code = chat_code(request)
   data = await chat_id(code)
+  return 
   chat = data["chat"]
   print("message text: ")
   text = re.search('\[message\]\[text\]=(.+?)&', request, re.DOTALL).group(1).lower()
