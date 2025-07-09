@@ -153,3 +153,7 @@ async def get_data(chat):
         response = response.json()
         
         return(response["result"])
+async def get_saved_chat(chat):
+    r = redis.Redis.from_url(redis_url, decode_responses=True)
+    data = r.hget(chat)
+    return data
