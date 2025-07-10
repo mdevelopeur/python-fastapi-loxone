@@ -119,6 +119,12 @@ async def finish_handler(request):
 
 async def start_handler(request):
   chat = re.search('\[connector\]\[chat_id\]=(.+?)&', request).group(1)
+  connector = re.search('\[connector\]\[chat_id\]=(.+?)&', request)
+  if connector:
+    connector = connector.group(1)
+  if "group" in connector:
+    print("group chat")
+    return
   r = redis.Redis.from_url(redis_url)
   timestamp = str(int(time.time()))
   r.hset('unsorted', timestamp + str(random.randint(0,100)), chat)
