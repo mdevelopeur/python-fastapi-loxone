@@ -40,6 +40,11 @@ async def redis_update_handler():
     print('pipeline execution time: ', int(round(time.time()*10000)) - mget_time)
     for row, key in zip(output, list):
             #print("row: ", key, row)
+            data = await get_data(key)
+            connector = data["entity_id"].split("|")[0]
+            if "group" in connector:
+                print("group skipped")
+                continue
             if "line" not in row:
                 print("skipped for no line in the row")
                 continue
