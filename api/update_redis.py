@@ -158,10 +158,14 @@ async def handle_unsorted():
 async def get_data(chat):
     async with httpx.AsyncClient() as client:
         data = {"CHAT_ID": chat}
-        response = await client.post(api +'imopenlines.dialog.get', data=data)
-        response = response.json()
+        print(data)
+        try:
+            response = await client.post(api +'imopenlines.dialog.get', data=data)
+            response = response.json()
         
-        return(response["result"])
+            return(response["result"])
+        except Exception as e:
+            print("dialog get exception: ", e)
 async def get_saved_chat(chat):
     r = redis.Redis.from_url(redis_url, decode_responses=True)
     data = r.hget(chat)
