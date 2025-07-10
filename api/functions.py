@@ -56,7 +56,8 @@ async def chat_id(code):
     response = await client.post(api +'imopenlines.dialog.get', data=data)
     response = response.json()
     print('chatId: ', response)
-    return {"chat": str(response["result"]["id"]), "user": str(response["result"]["owner"])}
+    connector = response["result"]["entity_id"].split("|")[0]
+    return {"chat": str(response["result"]["id"]), "user": str(response["result"]["owner"]), "connector": connector}
     
 async def update_chat(chat, line, user):
     pool = await asyncpg.create_pool(connection_string)
