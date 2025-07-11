@@ -15,7 +15,7 @@ async def imap_handler():
             #print(msg.html)
             html = str(msg.html)
             print(len(html))
-            name = re.match("Name", msg.html)
+            name = re.match("Name", html)
             print(name)
             
 
