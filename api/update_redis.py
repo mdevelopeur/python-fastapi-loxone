@@ -35,19 +35,19 @@ async def redis_update_handler():
             list.append(key)
             pipeline.hgetall(key)
     string = "MGET " + ', '.join(list)
-    print(linenum, string)
+    printn(string)
     mget_time = int(round(time.time()*10000))
     output = pipeline.execute()
-    print(linenum, 'pipeline execution time: ', int(round(time.time()*10000)) - mget_time)
+    printn('pipeline execution time: ', int(round(time.time()*10000)) - mget_time)
     for row, key in zip(output, list):
             #print("row: ", key, row)
             data = await get_data(key)
             connector = data["entity_id"].split("|")[0]
             if "group" in connector:
-                print(linenum,  group skipped")
+                printn("group skipped")
                 continue
             if "line" not in row:
-                print(linenum, "skipped for no line in the row")
+                printn("skipped for no line in the row")
                 continue
             #print(lines)
             #hgetall_time = int(round(time.time()*10000))        
@@ -57,14 +57,14 @@ async def redis_update_handler():
             if "origin" in row and len(queue) > 1:
                 statuses = {}
                 #print(statuses, "!")
-                print(linenum, queue, row)
+                printn(queue, row)
                 for user in queue:
                     status = await get_status(user)
                     statuses[user] = status 
-                print(linenum, statuses)
+                printn(statuses)
                 if False in statuses.values():
                     for user, status in statuses.items():
-                        print(linenum, user, status, row["user"])
+                        printn(user, status, row["user"])
                         if status and user != row["user"]:
                             await update_chat(key, row["line"], user)
                             await change_user(key, user)
@@ -74,7 +74,7 @@ async def redis_update_handler():
                         await update_chat(key, row["line"], row["origin"])
                         await change_user(key, row["origin"]) 
                     else:
-                        print(linenum, "user is origin")
+                        printn("user is origin")
                 #r.hset(key, mapping={"time": str(timestamp),"user": str(user), "line": str(row["line"])})
                 '''
                 try: 
@@ -97,32 +97,32 @@ async def redis_update_handler():
                     print('call exception: ', e)
                 '''
 async def change_user(chat, user):
-    print(linenum, "change user: started..")
+    printn("change user: started..")
     async with httpx.AsyncClient() as client:
-      print(linenum, "change user: connection..")
+      printn("change user: connection..")
       data = {"CHAT_ID": chat, "TRANSFER_ID": user}
       try:
-          print(linenum, "change user: posting..")
+          printn("change user: posting..")
           response = await client.post(api + 'imopenlines.operator.transfer', data=data)
           response = response.json()
-          print(linenum, 'transfer response: ', response)
+          printn('transfer response: ', response)
       except Exception as e:
-          print(linenum, 'transfer exception: ', e)
+          printn('transfer exception: ', e)
         
 async def get_lines(timestamp):
     async with httpx.AsyncClient() as client:
       lines = {}
       response = await client.post(api + 'imopenlines.config.list.get')
       json = response.json()
-      print(linenum, 'execution time: ', timestamp - time.time())
+      printn('execution time: ', timestamp - time.time())
       for line in json["result"]:
           #print(line)
           data = {"CONFIG_ID": line["ID"]}
           response = await client.post(api + 'imopenlines.config.get', data=data)
           result = response.json()["result"]
           lines[result["ID"]] = result["QUEUE"]
-          print(lines)
-          print('execution time: ', timestamp - int(time.time()))
+          printn(lines)
+          printn('execution time: ', timestamp - int(time.time()))
       return lines
 
 async def get_status(user):
@@ -139,27 +139,27 @@ async def get_status(user):
 async def handle_unsorted():
     r = redis.Redis.from_url(redis_url, decode_responses=True)
     unsorted = r.hgetall('unsorted')
-    print(unsorted)
+    printn(unsorted)
     for key in unsorted.keys():
         try:
             chat = unsorted[key]
             data = await get_data(chat)
             line = data["entity_id"].split('|')[1]
             owner = data["owner"]
-            print(owner)
+            printn(owner)
             if int(owner) != 0:
                #hash = r.hget(chat)
                #print(hash)
                r.hset(chat, mapping={"line": line, "user": owner, "origin": owner})
                r.hdel('unsorted', key)
-               print("origin set: ", chat, owner)
+               printn("origin set: ", chat, owner)
         except Exception as e:
-            print(f"{unsorted[key]} has not been deleted for {e}")
+            printn(f"{unsorted[key]} has not been deleted for {e}")
             
 async def get_data(chat):
     async with httpx.AsyncClient() as client:
         data = {"CHAT_ID": chat}
-        print(data)
+        printn(data)
         try:
             response = await client.post(api +'imopenlines.dialog.get', data=data)
             response = response.json()
