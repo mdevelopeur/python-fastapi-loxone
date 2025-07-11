@@ -21,7 +21,7 @@ async def imap_handler():
             print("Name" in html)
             name = re.findall("Name:(.*)<br>", html)      
             print(name)
-            
+            mailbox.move(msg.uid, "INBOX.Trash")
             #await create(
 
 async def create_deal(data):
