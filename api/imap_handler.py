@@ -22,10 +22,11 @@ async def imap_handler():
             name = re.findall("Name:(.*)<br>", html)      
             print(name)
             mailbox.move(msg.uid, "INBOX.Trash")
-            #await create(
+            await create_deal(name)
 
-async def create_deal(data):
+async def create_deal(name):
     async with httpx.AsyncClient() as client:
+        data = {"fields": {"TITLE": name}}
         response = await client.post(f"{api}crm.deal.add", json=data)
 
 async def get_data(text):
