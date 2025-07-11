@@ -100,6 +100,7 @@ async def redis_update_handler():
                 except Exception as e:
                     print('call exception: ', e)
                 '''
+    printn("update finished")
 async def change_user(chat, user):
     printn("change user: started..")
     async with httpx.AsyncClient() as client:
