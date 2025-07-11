@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request
 #from tgbot.main import tgbot
+from api.imap_handler import imap_handler
 from api.functions import hook_handler
 from api.check import update_handler
 from api.update_redis import redis_update_handler, get_saved_chat, handle_unsorted
@@ -42,7 +43,7 @@ async def send_message(request: Request):
 @app.get('/api/update')
 async def update(request: Request):
     try:
-        await update_handler()
+        await imap_handler()
     except Exception as e:
         print(e)
 
