@@ -11,10 +11,11 @@ async def imap_handler():
     with MailBox(server).login(address, password) as mailbox:
         for msg in mailbox.fetch():
             print(msg.date, msg.subject, len(msg.text or msg.html))
+            print(msg.html)
 
 async def create_deal(data):
     async with httpx.AsyncClient() as client:
         response = await client.post(f"{api}crm.deal.add", json=data)
 
 async def get_data(text):
-    
+    print("#")
