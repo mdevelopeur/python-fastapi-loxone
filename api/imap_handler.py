@@ -22,7 +22,7 @@ async def imap_handler():
             name = re.findall("Name:(.*)<br>", html)      
             print(name)
             
-            await create(
+            #await create(
 
 async def create_deal(data):
     async with httpx.AsyncClient() as client:
