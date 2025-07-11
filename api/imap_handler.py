@@ -1,5 +1,6 @@
 from imap_tools import MailBox, AND
 import httpx
+import re
 
 address = "crm@apexdiabetes.ru"
 password = "1Mcl552smPjUsPXu"
@@ -11,7 +12,10 @@ async def imap_handler():
     with MailBox(server).login(address, password) as mailbox:
         for msg in mailbox.fetch():
             print(msg.date, msg.subject, len(msg.text or msg.html))
-            print(msg.html)
+            #print(msg.html)
+            name = re.match("Name:(*+)<br>", msg.html)
+            print(name)
+            
 
 async def create_deal(data):
     async with httpx.AsyncClient() as client:
