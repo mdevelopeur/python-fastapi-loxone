@@ -43,12 +43,15 @@ async def redis_update_handler():
     for row, key in zip(output, list):
             #print("row: ", key, row)
             data = await get_data(key)
-            connector = data["entity_id"].split("|")[0]
-            if "group" in connector:
-                printn("group skipped")
-                continue
-            if "line" not in row:
-                printn("skipped for no line in the row")
+            if data:
+                connector = data["entity_id"].split("|")[0]
+                if "group" in connector:
+                    printn("group skipped")
+                    continue
+                if "line" not in row:
+                    printn("skipped for no line in the row")
+                    continue
+            else:
                 continue
             #print(lines)
             #hgetall_time = int(round(time.time()*10000))        
