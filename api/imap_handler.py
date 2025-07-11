@@ -13,7 +13,7 @@ async def imap_handler():
         for msg in mailbox.fetch():
             print(msg.date, msg.subject, len(msg.text or msg.html))
             #print(msg.html)
-            name = re.match("Name:(*+)<br>", msg.html)
+            name = re.match("Name:(.+)<br>", msg.html)
             print(name)
             
 
