@@ -1,9 +1,6 @@
 from fastapi import FastAPI, Request
 #from tgbot.main import tgbot
 from api.imap_handler import imap_handler
-from api.functions import hook_handler
-from api.check import update_handler
-from api.update_redis import redis_update_handler, get_saved_chat, handle_unsorted
 from urllib.parse import unquote, urlparse
 
 app = FastAPI()
