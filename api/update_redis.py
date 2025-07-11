@@ -146,7 +146,7 @@ async def handle_unsorted():
             data = await get_data(chat)
             line = data["entity_id"].split('|')[1]
             owner = data["owner"]
-            printn(owner)
+            printn(owner, line)
             if int(owner) != 0:
                #hash = r.hget(chat)
                #print(hash)
@@ -166,7 +166,7 @@ async def get_data(chat):
         
             return(response["result"])
         except Exception as e:
-            print("dialog get exception: ", e)
+            printn("dialog get exception: ", e)
             
 async def get_saved_chat(chat):
     r = redis.Redis.from_url(redis_url, decode_responses=True)
