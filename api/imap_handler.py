@@ -16,7 +16,8 @@ async def imap_handler():
             html = str(msg.html)
             print(len(html))
             print("Name" in html)
-            name = re.findall("Name", html)
+            name = re.findall("Name:(.*)<br>", html)
+            
             print(name)
             
 
