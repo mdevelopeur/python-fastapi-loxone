@@ -4,4 +4,4 @@ dotenv
 packaging
 redis
 emoji
-imap
+imap-tools
