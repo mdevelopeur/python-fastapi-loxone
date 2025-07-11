@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import asyncio
 import asyncpg
 import time
+import inspect
 #import aioredis
 import redis
 
@@ -18,7 +19,7 @@ load_dotenv(dotenv_path=".env.local")
 redis_url = os.getenv("REDIS_URL")
 
 async def redis_update_handler():
-    print(api, connection_string, redis_url)
+    print(inspect.currentframe().f_back.f_lineno , api, connection_string, redis_url)
     r = redis.Redis.from_url(redis_url, decode_responses=True)
     timestamp = int(time.time())
     lines = await get_lines(timestamp)
@@ -34,7 +35,7 @@ async def redis_update_handler():
             list.append(key)
             pipeline.hgetall(key)
     string = "MGET " + ', '.join(list)
-    print(string)
+    print("#37: ", string)
     mget_time = int(round(time.time()*10000))
     output = pipeline.execute()
     print('pipeline execution time: ', int(round(time.time()*10000)) - mget_time)
@@ -43,10 +44,10 @@ async def redis_update_handler():
             data = await get_data(key)
             connector = data["entity_id"].split("|")[0]
             if "group" in connector:
-                print("group skipped")
+                print("#46: group skipped")
                 continue
             if "line" not in row:
-                print("skipped for no line in the row")
+                print("#49: skipped for no line in the row")
                 continue
             #print(lines)
             #hgetall_time = int(round(time.time()*10000))        
@@ -56,14 +57,14 @@ async def redis_update_handler():
             if "origin" in row and len(queue) > 1:
                 statuses = {}
                 #print(statuses, "!")
-                print(queue, row)
+                print("#59: ", queue, row)
                 for user in queue:
                     status = await get_status(user)
                     statuses[user] = status 
-                print(statuses)
+                print("#63: ", statuses)
                 if False in statuses.values():
                     for user, status in statuses.items():
-                        print("#54: ", user, status, row["user"])
+                        print("#66: ", user, status, row["user"])
                         if status and user != row["user"]:
                             await update_chat(key, row["line"], user)
                             await change_user(key, user)
