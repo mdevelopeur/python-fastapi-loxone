@@ -28,7 +28,7 @@ async def imap_handler():
             
             input_2 = re.findall("Input_2:(.*)<br>", html)
             if len(input_2) > 0:
-                comments += ("\n" + input_2[0]
+                comments += ("\n" + input_2[0])
             #+ "\n" + re.findall("Input_2:(.*)<br>", html)
             print(name, phone, email, comment)
             mailbox.move(msg.uid, "INBOX.Trash")
