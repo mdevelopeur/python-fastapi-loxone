@@ -19,8 +19,11 @@ async def imap_handler():
             html = str(msg.html)
             print(len(html))
             print("Name" in html)
-            name = re.findall("Name:(.*)<br>", html)      
-            print(name)
+            name = re.findall("Name:(.*)<br>", html)    
+            phone = re.findall("Phone:(.*)<br>", html)
+            email = re.findall("Email:(.*)<br>", html)
+            comment = re.findall("Input:(.*)<br>", html)
+            print(name, phone, email, comment)
             mailbox.move(msg.uid, "INBOX.Trash")
             await create_deal(name)
 
