@@ -30,7 +30,7 @@ async def imap_handler():
             if len(input_2) > 0:
                 comments += ("\n" + input_2[0])
             #+ "\n" + re.findall("Input_2:(.*)<br>", html)
-            print(name, phone, email, comment)
+            print(name, phone, email, comments)
             mailbox.move(msg.uid, "INBOX.Trash")
             await create_deal(name)
 
