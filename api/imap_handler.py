@@ -32,7 +32,7 @@ async def imap_handler():
             #+ "\n" + re.findall("Input_2:(.*)<br>", html)
             print(name, phone, email, comments)
             mailbox.move(msg.uid, "INBOX.Trash")
-            await create_deal(name)
+            await create_deal(name, phone, email, comments)
 
 async def create_deal(name, phone, email, comments):
     async with httpx.AsyncClient() as client:
