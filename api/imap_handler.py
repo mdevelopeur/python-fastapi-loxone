@@ -24,6 +24,7 @@ async def imap_handler():
             name = re.findall("Name:(.*)<br>", html)[0]    
             phone = re.findall("Phone:(.*)<br>", html)[0]
             email = re.findall("Email:(.*)<br>", html)[0]
+            print(name, phone, email)
             comments = re.findall("Input:(.*)<br>", html)[0]
             
             input_2 = re.findall("Input_2:(.*)<br>", html)
