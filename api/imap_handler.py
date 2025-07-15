@@ -5,7 +5,9 @@ import re
 address = "crm@apexdiabetes.ru"
 password = "1Mcl552smPjUsPXu"
 server = "mail.netangels.ru"
-
+#email - UF_CRM_1723114805999
+#name - UF_CRM_1723114789182
+#phone - UF_CRM_1723114796732
 api = "https://b24-d1uwq7.bitrix24.ru/rest/1/lh1jmrsp8p01x3j3/"
 # Get date, subject and body len of all emails from INBOX folder
 async def imap_handler():
@@ -22,14 +24,14 @@ async def imap_handler():
             name = re.findall("Name:(.*)<br>", html)    
             phone = re.findall("Phone:(.*)<br>", html)
             email = re.findall("Email:(.*)<br>", html)
-            comment = re.findall("Input:(.*)<br>", html)
+            comments = re.findall("Input:(.*)<br>", html)
             print(name, phone, email, comment)
             mailbox.move(msg.uid, "INBOX.Trash")
             await create_deal(name)
 
-async def create_deal(name):
+async def create_deal(name, phone, email, comments):
     async with httpx.AsyncClient() as client:
-        data = {"fields": {"TITLE": name}}
+        data = {"fields": {"TITLE": name, "UF_CRM_1723114789182": name, "UF_CRM_1723114805999": email, "UF_CRM_1723114796732": phone, "COMMENTS": comments   }}
         response = await client.post(f"{api}crm.deal.add", json=data)
 
 async def get_data(text):
