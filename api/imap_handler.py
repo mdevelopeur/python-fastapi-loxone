@@ -41,7 +41,7 @@ async def imap_handler():
 
 async def create_deal(name, phone, email, comments):
     async with httpx.AsyncClient() as client:
-        data = {"fields": {"TITLE": name, "CATEGORY_ID": 12, "UF_CRM_1723114789182": name, "UF_CRM_1723114805999": email, "UF_CRM_1723114796732": phone, "COMMENTS": comments   }}
+        data = {"fields": {"TITLE": name, "CATEGORY_ID": 12, "UF_CRM_1723114789182": name, "UF_CRM_1723114805999": email, "UF_CRM_1723114796732": phone, "COMMENTS": comments, "ASSIGNED_BY_ID": 1  }}
         response = await client.post(f"{api}crm.deal.add", json=data)
         print(response.json())
 
