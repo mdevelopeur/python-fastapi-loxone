@@ -16,28 +16,29 @@ async def imap_handler():
             print(f)
         uids = []
         for msg in mailbox.fetch():
-            print(msg.date, msg.subject, len(msg.text or msg.html))
-            #print(msg.html)
-            html = str(msg.html)
-            print(len(html))
-            print("Name" in html)
-            name = re.findall("Name:(.*)<br>", html)[0]    
-            phone = re.findall("Phone:(.*)<br>", html)[0]
-            email = re.findall("Email:(.*)<br>", html)
-            if len(email) < 1:
-                email = re.findall("Textarea:(.*)<br>", html)[0]
-            else:
-                email = email[0]
-            print(name, phone, email)
-            comments = re.findall("Input:(.*)<br>", html)[0]
+            try:
+              print(msg.date, msg.subject, len(msg.text or msg.html))
+              #print(msg.html)
+              html = str(msg.html)
+              print(len(html))
+              print("Name" in html)
+              name = re.findall("Name:(.*)<br>", html)[0]    
+              phone = re.findall("Phone:(.*)<br>", html)[0]
+              email = re.findall("Email:(.*)<br>", html)
+              if len(email) < 1:
+                 email = re.findall("Textarea:(.*)<br>", html)[0]
+              else:
+                 email = email[0]
+              print(name, phone, email)
+              comments = re.findall("Input:(.*)<br>", html)[0]
             
-            input_2 = re.findall("Input_2:(.*)<br>", html)
-            if len(input_2) > 0:
+              input_2 = re.findall("Input_2:(.*)<br>", html)
+              if len(input_2) > 0:
                 comments += ("\n" + input_2[0])
-            #+ "\n" + re.findall("Input_2:(.*)<br>", html)
-            print(name, phone, email, comments)
-            mailbox.move(msg.uid, "INBOX.Trash")
-            await create_deal(name, phone, email, comments)
+              #+ "\n" + re.findall("Input_2:(.*)<br>", html)
+              print(name, phone, email, comments)
+              mailbox.move(msg.uid, "INBOX.Trash")
+              await create_deal(name, phone, email, comments)
 
 async def create_deal(name, phone, email, comments):
     async with httpx.AsyncClient() as client:
