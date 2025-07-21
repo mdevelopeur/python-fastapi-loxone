@@ -39,6 +39,8 @@ async def imap_handler():
               print(name, phone, email, comments)
               mailbox.move(msg.uid, "INBOX.Trash")
               await create_deal(name, phone, email, comments)
+            except Exception as e:
+              print(e)
 
 async def create_deal(name, phone, email, comments):
     async with httpx.AsyncClient() as client:
