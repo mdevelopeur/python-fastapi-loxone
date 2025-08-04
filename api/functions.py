@@ -2,7 +2,7 @@ from urllib.parse import unquote
 import httpx
 import re
 import asyncio
-import asyncpg
+#import asyncpg
 import time
 import os
 import redis
