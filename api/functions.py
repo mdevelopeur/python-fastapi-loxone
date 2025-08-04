@@ -19,6 +19,8 @@ connection_string = os.getenv("postgresql")
 slist = os.getenv("list").split(',')
 load_dotenv(dotenv_path=".env.local")
 redis_url = os.getenv("REDIS_URL")
+token = "AT2fZ89VHkDT7OaQZMlMlVkZdslpGwQPJNbTKpnbvQtbO8yBYcny"
+headers = {"Authorization": f"Bearer {token}"}
 
 async def hook_handler(request):
   async with httpx.AsyncClient() as client:
