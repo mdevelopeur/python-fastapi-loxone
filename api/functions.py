@@ -6,9 +6,12 @@ import asyncpg
 import time
 import os
 import redis
-import emoji
 import random 
 from dotenv import load_dotenv
+import pandas as pd
+import openpyxl
+import io
+
 
 load_dotenv(dotenv_path=".env")
 api = os.getenv("api")
@@ -18,38 +21,15 @@ load_dotenv(dotenv_path=".env.local")
 redis_url = os.getenv("REDIS_URL")
 
 async def hook_handler(request):
-  request = unquote(request).strip().replace("\\","")
-  event = re.search('event=(.+?)&', request).group(1)
-  print(type(event), event)
-  print(slist)
-  if event == 'ONSESSIONFINISH':
+  async with httpx.AsyncClient() as client:
+    url = "https://edef5.pcloud.com/DLZFWa8d6Z1pCUbu7ZAT2fZZP6vlVkZf7ZZlK4ZZFsFZjpZBJZhRZcDnYEyFWkG7qo6mR3Bf3UpWzrtRy/%D0%9E%D1%82%D1%87%D0%B5%D1%82%20-%20%D0%9A%D0%90%D0%9C%20%D0%9A%D0%B0%D0%BB%D0%B8%D1%87%D0%BA%D0%B8%D0%BD%20%D0%94.%D0%A1.xlsx"
+    response = client.get(url)
+    file = io.BytesIO(response.content)
     try:
-      await finish_handler(request)
+      df = pd.read_excel(file, engine='openpyxl')
+      print(df.head())
     except Exception as e:
-      print(e)
-  elif event == 'ONOPENLINEMESSAGEADD':
-    try:
-      await add_handler(request)
-      print("message skipped")
-    except Exception as e:
-      print(e)  
-  elif event == 'ONSESSIONSTART': 
-    try:
-       await start_handler(request)
-    except Exception as e:
-      print(e)  
-      
-def chat_code(request):
-  data = {}
-  request = unquote(request)
-  data['id'] = re.search('\[connector_id\]=(.+?)&', request).group(1)
-  data['line'] = re.search('\[connector\]\[line_id\]=(.+?)&', request).group(1)
-  data['chat'] = re.search('\[connector\]\[chat_id\]=(.+?)&', request).group(1)
-  data['user'] = re.search('data\[DATA\]\[connector\]\[user_id\]=(.+?)&', request).group(1)
-  code = '|'.join(data.values())
-  print('code: ', code)
-  return code
-
+      print(f"Error reading Excel file: {e}")
 async def chat_id(code):
   async with httpx.AsyncClient() as client:
     data = {"USER_CODE": code}
@@ -59,88 +39,3 @@ async def chat_id(code):
     connector = response["result"]["entity_id"].split("|")[0]
     return {"chat": str(response["result"]["id"]), "user": str(response["result"]["owner"]), "connector": connector}
     
-async def update_chat(chat, line, user):
-    pool = await asyncpg.create_pool(connection_string)
-    r = redis.Redis.from_url(redis_url)
-    timestamp = int(time.time())
-    timestamp = str(int(time.time()))
-    statement = f"""
-      INSERT INTO chats (id, time, line, user_id, active)
-      VALUES ('{chat}', '{timestamp}', '{line}', '{user}', 'Y')
-      ON CONFLICT (id)
-      DO UPDATE SET id = '{chat}', time = '{timestamp}', line = '{line}', user_id = '{user}', active = 'Y';
-    """
-    r.hset(chat, mapping={"time": timestamp, "line": line, "user": user})
-    #r.mset(mapping={f"{chat}-time": timestamp, f"{chat}-line": line, f"{chat}-user": user})
-    async with pool.acquire() as conn:
-    # Execute a statement to create a new table.
-        await conn.execute(statement)
-    await pool.close()  
-
-async def add_handler(request):
-  code = chat_code(request)
-  data = await chat_id(code)
-  return 
-  chat = data["chat"]
-  print("message text: ")
-  text = re.search('\[message\]\[text\]=(.+?)&', request, re.DOTALL).group(1).lower()
-  print(text)
-  #if text
-  emojis = emoji.emoji_list(text)
-  for i in emojis:
-    print(i["emoji"])
-  emojis = len(emojis) > 0
-  for i in slist:
-    if text.find(i) > -1:
-      emojis = True
-      break
-    
-  user = re.search('\[message\]\[user_id\]=(.+?)&', request)
-  print('message user: ', user, data["user"] == str(user))
-  if user:
-    user = user.group(1)
-  #if data["user"] == str(user) or emojis:
-    #await delete_chat(chat)
-    
-  else:
-    print('add_handler: ')
-    print('chat: ', chat)
-    line = re.search('\[connector\]\[line_id\]=(.+?)&', request).group(1)
-    print('line: ', line)
-    user = data["user"]
-    #user = re.search('\[user_id\]=(.+?)&', request).group(1)
-    print('usee: ', user)
-    if user != '0':
-        await update_chat(chat, line, user)
-    
-async def finish_handler(request):
-  chat = re.search('\[chat_id\]=(.+?)&', request)
-  if chat:
-    await delete_chat(chat.group(1))
-
-async def start_handler(request):
-  chat = re.search('\[connector\]\[chat_id\]=(.+?)&', request).group(1)
-  connector = re.search('\[connector\]\[chat_id\]=(.+?)&', request)
-  if connector:
-    connector = connector.group(1)
-  if "group" in connector:
-    print("group chat")
-    return
-  r = redis.Redis.from_url(redis_url)
-  timestamp = str(int(time.time()))
-  r.hset('unsorted', timestamp + str(random.randint(0,100)), chat)
-  
-async def delete_chat(chat):
-  pool = await asyncpg.create_pool(connection_string)
-  r = redis.Redis.from_url(redis_url)
-  print ('deleting chat ', chat)
-  dres = r.delete(str(chat))
-  print(dres)
-  statement = f"UPDATE chats SET active = 'N' WHERE id = '{chat}'"
-  print(statement)
-  async with pool.acquire() as conn:
-    response = await conn.execute(statement)
-    #response = await conn.fetchall("SELECT * FROM chats")
-    print(response)
-  await pool.close()
-  print('chat ', chat, ' deleted')
