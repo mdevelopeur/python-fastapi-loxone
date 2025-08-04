@@ -38,4 +38,4 @@ async def get_link(client, fileid):
   url = "https://eapi.pcloud.com/getfilelink?fileid=" + fileid
   response = await client.get(url, headers=headers)
   response = response.json()
-  return response["hosts"][0] + response["path"]
+  return "https://" + response["hosts"][0] + response["path"]
