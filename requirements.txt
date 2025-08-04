@@ -3,5 +3,6 @@ httpx
 dotenv
 packaging
 redis
-emoji
-imap-tools
+pandas
+openpyxl
+
