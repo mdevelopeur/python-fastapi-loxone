@@ -9,7 +9,7 @@ app = FastAPI()
 @app.get('/api/update')
 async def update(request: Request):
     try:
-        await hook_handler()
+        await hook_handler(request)
     except Exception as e:
         print(e)
 
