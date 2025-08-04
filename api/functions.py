@@ -30,6 +30,8 @@ async def hook_handler(request):
       print(df.head())
     except Exception as e:
       print(f"Error reading Excel file: {e}")
+
+
 async def chat_id(code):
   async with httpx.AsyncClient() as client:
     data = {"USER_CODE": code}
