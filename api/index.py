@@ -9,7 +9,7 @@ app = FastAPI()
 @app.get('/api/update')
 async def update(request: Request):
     try:
-        await imap_handler()
+        await hook_handler()
     except Exception as e:
         print(e)
 
