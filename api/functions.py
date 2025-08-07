@@ -48,9 +48,21 @@ async def list_folders(client):
   return folders 
   
 def get_folder_data(folder):
-  updated = folder["modified"].split(' ')
+  updated = get_time(folder["modified"])
+  print(updated)
+  return {"id": folder["folderid"], "name": folder["name"], "updated": updated}
+  
+async def get_files(client, folder_id, last_date):
+  url = eapi + "listfolder?folderid=" + folder_id
+  response = await client.get(url, headers=headers)
+  response = response.json()
+  files = response["metadata"]["contents"]
+  files = list(filter(lambda file: get_time(file["modified"]) > last_date, files))
+  return files
+    
+def get_time(time):
+  updated = time.split(' ')
   updated = ' '.join(updated[1:5])
   updated = datetime.strptime(updated, "%d %B %Y %H %M %S")
-  print(updated)
-  return {"id": folder["id"], "name": folder["name"], "updated": updated}
+  return updated
   
