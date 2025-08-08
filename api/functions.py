@@ -66,3 +66,11 @@ def get_time(time):
   updated = datetime.strptime(updated, "%d %B %Y %H %M %S")
   return updated
   
+async def get_requsites(client):
+  url = api + "crm.requisite.list"
+  body = {"select": ["ENTITY_ID", "RQ_INN"]}
+  response = client.post(url, json=body)
+  response = response.json()
+  return response["result"]
+
+
