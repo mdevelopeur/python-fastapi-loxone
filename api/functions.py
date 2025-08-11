@@ -74,7 +74,7 @@ async def get_files(client, folder_id, last_date):
 def get_time(time):
   updated = time.split(' ')
   updated = ' '.join(updated[1:5])
-  updated = datetime.strptime(updated, "%d %B %Y %H %M %S")
+  updated = datetime.strptime(updated, "%d %B %Y %H:%M:%S")
   return updated
   
 async def get_requsites(client):
