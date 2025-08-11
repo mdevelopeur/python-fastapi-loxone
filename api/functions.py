@@ -1,4 +1,5 @@
 from urllib.parse import unquote
+from datetime import datetime
 import httpx
 import re
 import asyncio
@@ -22,9 +23,19 @@ eapi = "https://eapi.pcloud.com/"
 token = "AT2fZ89VHkDT7OaQZMlMlVkZdslpGwQPJNbTKpnbvQtbO8yBYcny"
 headers = {"Authorization": f"Bearer {token}"}
 
-async def hook_handler(request):
+async def main():
+  last_date = datetime(2025, 7, 1)
   async with httpx.AsyncClient() as client:
-    url = await get_link(client, "71220424309")
+    files = []
+    folders = await list_folders(client)
+    for folder in folders:
+      inner_files = await get_files(client, folder["folderid"], last_date)
+      files.extend(inner_files)
+    for file in files:
+      await file_handler(client, file["fileid"])
+      
+async def file_handler(client, fileid):
+    url = await get_link(client, fileid)
     response = await client.get(url)
     file = io.BytesIO(response.content)
     try:
