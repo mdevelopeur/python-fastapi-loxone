@@ -38,7 +38,8 @@ async def main():
       inner_df = await file_handler(client, file["fileid"])
       data_frames.append(inner_df)
     df = pd.concat(data_frames)
-    pd.set_option('display.max_columns', None)
+    #pd.set_option('display.max_columns', None)
+    pd.options.display.max_rows = 999
     print(df["Дата последнего посещения"])
     
     #print(df.loc[:, "Дата последнего посещения"])
