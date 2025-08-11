@@ -26,6 +26,7 @@ headers = {"Authorization": f"Bearer {token}"}
 
 async def main():
   last_date = datetime(2025, 7, 1)
+  dates = await get_dates()
   async with httpx.AsyncClient() as client:
     files = []
     data_frames = []
@@ -39,12 +40,9 @@ async def main():
       data_frames.append(inner_df)
     df = pd.concat(data_frames)
     df = df.sort(by="Дата последнего посещения")
-    #pd.set_option('display.max_columns', None)
     pd.options.display.max_rows = 999
-    #print(df["Дата последнего посещения"])
     for date in df["Дата последнего посещения"]:
       check_date(date)
-    #print(df.loc[:, "Дата последнего посещения"])
     
 async def file_handler(client, fileid):
     url = await get_link(client, fileid)
@@ -126,3 +124,17 @@ async def get_comments(client, companies):
   
 def check_date(date):
   print(date, type(date))
+
+async def get_dates():
+  r = redis.from_url(redis_url, decode_responses=True)
+  pipeline = r.pipeline()
+  keys = r.keys()
+  for key in keys:
+    pipeline.hgetall(key)
+  data = pipeline.execute()
+  dates = {}
+  for item in data:
+    date = datetime.fromtimestamp(int(item["time"]))
+    dates[item["id"]] = date
+  
+  return dates
