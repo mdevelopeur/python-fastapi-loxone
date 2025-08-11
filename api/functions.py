@@ -28,14 +28,16 @@ async def main():
   last_date = datetime(2025, 7, 1)
   async with httpx.AsyncClient() as client:
     files = []
-    df = pd.DataFrame()
+    data_frames = []
+    #df = pd.DataFrame()
     folders = await list_folders(client)
     for folder in folders:
       inner_files = await get_files(client, folder["id"], last_date)
       files.extend(inner_files)
     for file in files:
       inner_df = await file_handler(client, file["fileid"])
-      df.append(inner_df)
+      data_frames.append(inner_df)
+    df = pd.concat(data_frames)
     print(df.loc[:, "Дата последнего посещения"])
     
 async def file_handler(client, fileid):
