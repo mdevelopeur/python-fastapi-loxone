@@ -64,7 +64,7 @@ def get_folder_data(folder):
   return {"id": folder["folderid"], "name": folder["name"], "updated": updated}
   
 async def get_files(client, folder_id, last_date):
-  url = eapi + "listfolder?folderid=" + folder_id
+  url = eapi + "listfolder?folderid=" + str(folder_id)
   response = await client.get(url, headers=headers)
   response = response.json()
   files = response["metadata"]["contents"]
