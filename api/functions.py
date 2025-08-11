@@ -45,7 +45,7 @@ async def file_handler(client, fileid):
       print(f"Error reading Excel file: {e}")
 
 async def get_link(client, fileid):
-  url = eapi + "getfilelink?fileid=" + fileid
+  url = eapi + "getfilelink?fileid=" + str(fileid)
   response = await client.get(url, headers=headers)
   response = response.json()
   return "https://" + response["hosts"][0] + response["path"]
