@@ -38,7 +38,10 @@ async def main():
       inner_df = await file_handler(client, file["fileid"])
       data_frames.append(inner_df)
     df = pd.concat(data_frames)
-    print(df.loc[:, "Дата последнего посещения"])
+    pd.set_option('display.max_columns', None)
+    print(df["Дата последнего посещения"])
+    
+    #print(df.loc[:, "Дата последнего посещения"])
     
 async def file_handler(client, fileid):
     url = await get_link(client, fileid)
