@@ -39,11 +39,12 @@ async def main():
       inner_df = await file_handler(client, file["fileid"])
       data_frames.append(inner_df)
     df = pd.concat(data_frames)
-    df = df.sort(by="Дата последнего посещения")
+    df = df.sort_by_value(by=["ИНН", "Дата последнего посещения"])
     pd.options.display.max_rows = 999
     for date in df["Дата последнего посещения"]:
       check_date(date)
-    
+    for inn in list(set(df["ИНН"].tolist())):
+      
 async def file_handler(client, fileid):
     url = await get_link(client, fileid)
     response = await client.get(url)
