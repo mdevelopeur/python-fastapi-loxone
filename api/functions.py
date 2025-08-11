@@ -16,9 +16,9 @@ import io
 load_dotenv(dotenv_path=".env")
 api = os.getenv("api")
 connection_string = os.getenv("postgresql")
-slist = os.getenv("list").split(',')
+#slist = os.getenv("list").split(',')
 load_dotenv(dotenv_path=".env.local")
-redis_url = os.getenv("REDIS_URL")
+#redis_url = os.getenv("REDIS_URL")
 eapi = "https://eapi.pcloud.com/"
 token = "AT2fZ89VHkDT7OaQZMlMlVkZdslpGwQPJNbTKpnbvQtbO8yBYcny"
 headers = {"Authorization": f"Bearer {token}"}
