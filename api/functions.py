@@ -28,13 +28,16 @@ async def main():
   last_date = datetime(2025, 7, 1)
   async with httpx.AsyncClient() as client:
     files = []
+    df = pd.DataFrame()
     folders = await list_folders(client)
     for folder in folders:
       inner_files = await get_files(client, folder["id"], last_date)
       files.extend(inner_files)
     for file in files:
-      await file_handler(client, file["fileid"])
-      
+      inner_df = await file_handler(client, file["fileid"])
+      df.append(inner_df)
+    print(df.loc[:, "Дата последнего посещения"])
+    
 async def file_handler(client, fileid):
     url = await get_link(client, fileid)
     response = await client.get(url)
@@ -42,14 +45,18 @@ async def file_handler(client, fileid):
     try:
       df = pd.read_excel(file, engine='openpyxl')
       print(df.head())
+      return df
     except Exception as e:      
       print(f"Error reading Excel file: {e}")
       try:
         df = pd.read_excel(file, engine='xlrd')
         print(df.head())
+        return df
       except Exception as e:      
         print(f"Error reading Excel file: {e}")
-      
+        df = pd.DataFrame()
+        return df
+        
 async def get_link(client, fileid):
   url = eapi + "getfilelink?fileid=" + str(fileid)
   response = await client.get(url, headers=headers)
