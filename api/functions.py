@@ -29,7 +29,7 @@ async def main():
     files = []
     folders = await list_folders(client)
     for folder in folders:
-      inner_files = await get_files(client, folder["folderid"], last_date)
+      inner_files = await get_files(client, folder["id"], last_date)
       files.extend(inner_files)
     for file in files:
       await file_handler(client, file["fileid"])
