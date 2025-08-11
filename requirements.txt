@@ -5,4 +5,4 @@ packaging
 redis
 pandas
 openpyxl
-
+xlrd
