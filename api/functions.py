@@ -10,6 +10,7 @@ import redis
 import random 
 from dotenv import load_dotenv
 import pandas as pd
+import xlrd
 import openpyxl
 import io
 
@@ -41,9 +42,14 @@ async def file_handler(client, fileid):
     try:
       df = pd.read_excel(file, engine='openpyxl')
       print(df.head())
-    except Exception as e:
+    except Exception as e:      
       print(f"Error reading Excel file: {e}")
-
+      try:
+        df = pd.read_excel(file, engine='xlrd')
+        print(df.head())
+      except Exception as e:      
+        print(f"Error reading Excel file: {e}")
+      
 async def get_link(client, fileid):
   url = eapi + "getfilelink?fileid=" + str(fileid)
   response = await client.get(url, headers=headers)
