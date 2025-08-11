@@ -40,8 +40,9 @@ async def main():
     df = pd.concat(data_frames)
     #pd.set_option('display.max_columns', None)
     pd.options.display.max_rows = 999
-    print(df["Дата последнего посещения"])
-    
+    #print(df["Дата последнего посещения"])
+    for date in df["Дата последнего посещения"]:
+      check_date(date)
     #print(df.loc[:, "Дата последнего посещения"])
     
 async def file_handler(client, fileid):
@@ -58,7 +59,7 @@ async def file_handler(client, fileid):
         df = pd.read_excel(file, engine='xlrd')
         print(df.head())
         return df
-      except Exception as e:      
+      ex:cept Exception as e:      
         print(f"Error reading Excel file: {e}")
         df = pd.DataFrame()
         return df
@@ -122,3 +123,5 @@ async def get_comments(client, companies):
   response = response.json()
   return response["result"]
   
+def check_date(date):
+  print(date, typeof(date))
