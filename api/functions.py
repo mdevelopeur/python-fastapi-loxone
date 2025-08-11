@@ -59,7 +59,7 @@ async def file_handler(client, fileid):
         df = pd.read_excel(file, engine='xlrd')
         print(df.head())
         return df
-      ex:cept Exception as e:      
+      except Exception as e:      
         print(f"Error reading Excel file: {e}")
         df = pd.DataFrame()
         return df
