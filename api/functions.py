@@ -39,6 +39,7 @@ async def main():
       data_frames.append(inner_df)
     df = pd.concat(data_frames)
     data = await dframe_handler(client, df)
+    await process_data(client, data)
     
 async def dframe_handler(client, df):
     check_date = datetime(2025, 7, 1)
@@ -58,11 +59,12 @@ async def dframe_handler(client, df):
          parse = parse_row(row)
          if parse:
            data[inn].append(parse)
-    print("data: ", list(data.keys()))  
+    #print("data: ", list(data.keys()))  
     
     for key in data.keys():
-      print(data[key])
+      #print(data[key])
       data[key] = [item for item in data[key] if item]
+      #print(key
     return data
     
 async def file_handler(client, fileid):
@@ -120,12 +122,16 @@ def get_time(time):
   updated = datetime.strptime(updated, "%d %b %Y %H:%M:%S")
   return updated
   
-async def get_requsites(client):
+async def get_companies(client):
   url = api + "crm.requisite.list"
   body = {"select": ["ENTITY_ID", "RQ_INN"]}
   response = client.post(url, json=body)
   response = response.json()
-  return response["result"]
+  companies = {}
+  for item in response["result"]:
+    companies[item["RQ_INN"]] = item["ENTITY_ID"]
+  #companies = list(map(lambda item: {item["RQ_INN"]: item["ENTITY_ID"]}, response["result"]))
+  return companies 
 
 async def set_comments(client, companies):
   url = api + "batch"
@@ -139,7 +145,7 @@ async def set_comments(client, companies):
   response = response.json()
   return response["result"]["result"]
 
-async def get_comments(client, companies):
+async def get_comments(client):
   url = api + "crm.company.list"
   body = {"select": ["ID", "COMMENTS"]}
   response = client.post(url, json=body)
@@ -187,14 +193,19 @@ def parse_row(row):
 
 def format_headers(df):
   headers = list(df.keys())
-  #print(headers)
   headers = df.columns.tolist()
-  #print(headers)
   formatted_headers = list(map(lambda header: header.strip().upper(), headers))
-  #print(headers)
   df = df.rename(columns=dict(zip(headers, formatted_headers)))
-  #print(list(df.keys()))
   return df
 
 async def process_data(client, data):
-  
+  companies = await get_companies(client)
+  comments = await get_comments(client)
+  keys = list(data.keys())
+  dates = await get_dates()
+  for key in keys:
+    company = companies[key]
+    date = dates[key]
+    reports = list(filter(lambda item: isinstance(item["last_visit"], datetime), data[key]))
+    reports.sort(key=lambda item: item["last visit"])
+    print(reports[0])
