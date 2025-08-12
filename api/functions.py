@@ -46,9 +46,11 @@ async def dframe_handler(client, df):
     df = df.sort_values(by=["инн", "Дата последнего посещения"])
     pd.options.display.max_rows = 999
     for date in df["Дата последнего посещения"]:
-      check_date(date)
+      ...
+      #check_date(date)
     for inn in list(set(df["инн"].tolist())):
       rows = df[df["инн"] == inn]
+      print(rows)
       for row in rows:
          print(row["Дата последнего посещения"])
          if isinstance(row["Дата последнего посещения"], pd.Timestamp):
