@@ -161,3 +161,17 @@ def convert_date(date):
     return date
   else:
     return 0
+
+def parse_row(row):
+  dict = {}
+  last_date = convert_date(row["Дата последнего посещения"])
+  next_date = convert_date(row["Дата следующего посещения"])
+  if last_date and next_date:
+    print(last_date, next_date)
+    dict["last_visit"] = last_date
+    dict["next_visit"] = next_date
+  else:
+    return False
+  dict["report"] = row["Отчет последнего посещения"]
+  dict["plan"] = row["План для следующего посещения"]
+  return dict
