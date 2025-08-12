@@ -58,7 +58,7 @@ async def dframe_handler(client, df):
          parse = parse_row(row)
          if parse:
            data[inn].append(parse)
-    print("data: ", data)       
+    #print("data: ", data)       
         
 async def file_handler(client, fileid):
     url = await get_link(client, fileid)
@@ -98,7 +98,7 @@ async def list_folders(client):
   
 def get_folder_data(folder):
   updated = get_time(folder["modified"])
-  print(updated)
+  #print(updated)
   return {"id": folder["folderid"], "name": folder["name"], "updated": updated}
   
 async def get_files(client, folder_id, last_date):
@@ -171,7 +171,7 @@ def parse_row(row):
   last_date = convert_date(row["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"])
   next_date = convert_date(row["ДАТА СЛЕДУЮЩЕГО ПОСЕЩЕНИЯ"])
   if last_date and next_date:
-    print(last_date, next_date)
+    #print(last_date, next_date)
     dict["last_visit"] = last_date
     dict["next_visit"] = next_date
   else:
