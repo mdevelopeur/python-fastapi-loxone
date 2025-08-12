@@ -58,7 +58,7 @@ async def dframe_handler(client, df):
          parse = parse_row(row)
          if parse:
            data[inn].append(parse)
-     print("data: ", data)       
+    print("data: ", data)       
         
 async def file_handler(client, fileid):
     url = await get_link(client, fileid)
