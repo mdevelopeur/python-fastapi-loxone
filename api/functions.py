@@ -50,7 +50,7 @@ async def dframe_handler(client, df):
       #check_date(date)
     for inn in list(set(df["инн"].tolist())):
       rows = df[df["инн"] == inn]
-      print("rows: ", rows)
+      print("ИНН: ", inn)
       for index, row in rows.iterrows():
          print("last visit: ", row["Дата последнего посещения"])
          if isinstance(row["Дата последнего посещения"], pd.Timestamp):
