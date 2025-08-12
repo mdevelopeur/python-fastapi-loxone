@@ -41,18 +41,21 @@ async def main():
     await dframe_handler(client, df)
 
 async def dframe_handler(client, df):
-    last_date = datetime(2025, 7, 1)
+    check_date = datetime(2025, 7, 1)
     dates = await get_dates()
     df = df.sort_values(by=["инн", "Дата последнего посещения"])
     pd.options.display.max_rows = 999
     for date in df["Дата последнего посещения"]:
       ...
       #check_date(date)
+    data = {}
     for inn in list(set(df["инн"].tolist())):
       rows = df[df["инн"] == inn]
       print("ИНН: ", inn)
       for index, row in rows.iterrows():
-         print("last visit: ", row["Дата последнего посещения"], isinstance(row["Дата последнего посещения"], pd.Timestamp), type(row["Дата последнего посещения"]))
+         print("last visit: ", row["Дата последнего посещения"], isinstance(row["Дата последнего посещения"], datetime), type(row["Дата последнего посещения"]))
+         #last_date = 
+         #data[inn] = 
          #if isinstance(row["Дата последнего посещения"], pd.Timestamp):
          #print("timestamp")       
         
@@ -150,3 +153,10 @@ async def get_dates():
     dates[item["id"]] = date
   
   return dates
+
+def convert_date(date):
+  if isinstance(date, pd.Timestamp):
+    return date.to_pydatetime()
+  elif isinstance(date, datetime):
+    return date
+  else return 0
