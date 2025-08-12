@@ -77,6 +77,7 @@ async def file_handler(client, fileid):
       except Exception as e:      
         print(f"Error reading Excel file: {e}")
         df = pd.DataFrame()
+        format_headers(df)
         return df
         
 async def get_link(client, fileid):
