@@ -187,5 +187,5 @@ def format_headers(df):
   print(headers)
   formatted_headers = list(map(lambda header: header.strip().upper(), headers))
   print(headers)
-  df.rename(columns=dict(zip(headers, formatted_headers)))
+  df = df.rename(columns=dict(zip(headers, formatted_headers)))
   print(list(df.keys()))
