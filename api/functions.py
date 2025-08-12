@@ -43,14 +43,14 @@ async def main():
 async def dframe_handler(client, df):
     check_date = datetime(2025, 7, 1)
     dates = await get_dates()
-    df = df.sort_values(by=["инн", "Дата последнего посещения"])
+    df = df.sort_values(by=["ИНН", "ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"])
     pd.options.display.max_rows = 999
-    for date in df["Дата последнего посещения"]:
+    for date in df["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]:
       ...
       #check_date(date)
     data = {}
     for inn in list(set(df["инн"].tolist())):
-      rows = df[df["инн"] == inn]
+      rows = df[df["ИНН"] == inn]
       print("ИНН: ", inn)
       data[inn] = []
       for index, row in rows.iterrows():
@@ -67,19 +67,19 @@ async def file_handler(client, fileid):
     try:
       df = pd.read_excel(file, engine='openpyxl')
       #print(df.head())
-      format_headers(df)
+      df = format_headers(df)
       return df
     except Exception as e:      
       print(f"Error reading Excel file: {e}")
       try:
         df = pd.read_excel(file, engine='xlrd')
         #print(df.head())
-        format_headers(df)
+        df = format_headers(df)
         return df
       except Exception as e:      
         print(f"Error reading Excel file: {e}")
         df = pd.DataFrame()
-        format_headers(df)
+        #format_headers(df)
         return df
         
 async def get_link(client, fileid):
@@ -168,16 +168,16 @@ def convert_date(date):
 
 def parse_row(row):
   dict = {}
-  last_date = convert_date(row["Дата последнего посещения"])
-  next_date = convert_date(row["Дата следующего посещения"])
+  last_date = convert_date(row["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"])
+  next_date = convert_date(row["ДАТА СЛЕДУЮЩЕГО ПОСЕЩЕНИЯ"])
   if last_date and next_date:
     print(last_date, next_date)
     dict["last_visit"] = last_date
     dict["next_visit"] = next_date
   else:
     return False
-  dict["report"] = row["Отчет последнего посещения"]
-  dict["plan"] = row["План для следующего посещения"]
+  dict["report"] = row["ОТЧЕТ ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]
+  dict["plan"] = row["ПЛАН ДЛЯ СЛЕДУЮЩЕГО ПОСЕЩЕНИЯ"]
   return dict
 
 def format_headers(df):
@@ -189,3 +189,4 @@ def format_headers(df):
   print(headers)
   df = df.rename(columns=dict(zip(headers, formatted_headers)))
   print(list(df.keys()))
+  return df
