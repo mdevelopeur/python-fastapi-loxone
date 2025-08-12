@@ -53,11 +53,8 @@ async def dframe_handler(client, df):
       print("rows: ", rows)
       for index, row in rows.iterrows():
          print("last visit: ", row["Дата последнего посещения"])
-      for row in rows:
-         print(row)
-         print("row: ", row["Дата последнего посещения"])
          if isinstance(row["Дата последнего посещения"], pd.Timestamp):
-           print("timestamp")
+           print("timestamp")       
         
 async def file_handler(client, fileid):
     url = await get_link(client, fileid)
