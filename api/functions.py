@@ -50,7 +50,7 @@ async def dframe_handler(client, df):
       #check_date(date)
     for inn in list(set(df["инн"].tolist())):
       rows = df[df["инн"] == inn]
-      print(rows)
+      print("rows: ", rows)
       for row in rows:
          print("row: ", row["Дата последнего посещения"])
          if isinstance(row["Дата последнего посещения"], pd.Timestamp):
@@ -62,13 +62,13 @@ async def file_handler(client, fileid):
     file = io.BytesIO(response.content)
     try:
       df = pd.read_excel(file, engine='openpyxl')
-      print(df.head())
+      #print(df.head())
       return df
     except Exception as e:      
       print(f"Error reading Excel file: {e}")
       try:
         df = pd.read_excel(file, engine='xlrd')
-        print(df.head())
+        #print(df.head())
         return df
       except Exception as e:      
         print(f"Error reading Excel file: {e}")
