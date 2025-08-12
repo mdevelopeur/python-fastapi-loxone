@@ -181,5 +181,7 @@ def parse_row(row):
 def format_headers(df):
   headers = list(df.keys())
   print(headers)
+  headers = df.columns.tolist()
+  print(headers)
   headers = list(map(lambda header: header.strip().upper(), headers))
   print(headers)
