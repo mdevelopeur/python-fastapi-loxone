@@ -51,14 +51,14 @@ async def dframe_handler(client, df):
     data = {}
     for inn in list(set(df["ИНН"].tolist())):
       rows = df[df["ИНН"] == inn]
-      print("ИНН: ", inn)
+      #print("ИНН: ", inn)
       data[inn] = []
       for index, row in rows.iterrows():
          #print("last visit: ", row["Дата последнего посещения"], isinstance(row["Дата последнего посещения"], datetime), type(row["Дата последнего посещения"]))
          parse = parse_row(row)
          if parse:
            data[inn].append(parse)
-    #print("data: ", data)       
+    print("data: ", list(data.values()))       
         
 async def file_handler(client, fileid):
     url = await get_link(client, fileid)
