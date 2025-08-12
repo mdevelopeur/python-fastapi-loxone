@@ -38,8 +38,8 @@ async def main():
       inner_df = await file_handler(client, file["fileid"])
       data_frames.append(inner_df)
     df = pd.concat(data_frames)
-    await dframe_handler(client, df)
-
+    data = await dframe_handler(client, df)
+    
 async def dframe_handler(client, df):
     check_date = datetime(2025, 7, 1)
     dates = await get_dates()
@@ -59,9 +59,12 @@ async def dframe_handler(client, df):
          if parse:
            data[inn].append(parse)
     print("data: ", list(data.keys()))  
+    
     for key in data.keys():
       print(data[key])
-        
+      data[key] = [item for item in data[key] if item]
+    return data
+    
 async def file_handler(client, fileid):
     url = await get_link(client, fileid)
     response = await client.get(url)
@@ -192,3 +195,6 @@ def format_headers(df):
   df = df.rename(columns=dict(zip(headers, formatted_headers)))
   #print(list(df.keys()))
   return df
+
+async def process_data(client, data):
+  
