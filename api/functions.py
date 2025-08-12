@@ -52,7 +52,7 @@ async def dframe_handler(client, df):
       rows = df[df["инн"] == inn]
       print(rows)
       for row in rows:
-         print(row["Дата последнего посещения"])
+         print("row: ", row["Дата последнего посещения"])
          if isinstance(row["Дата последнего посещения"], pd.Timestamp):
            print("timestamp")
         
