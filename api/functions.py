@@ -26,6 +26,7 @@ headers = {"Authorization": f"Bearer {token}"}
 
 async def main():  
   async with httpx.AsyncClient() as client:
+    last_date = datetime(2025, 7, 1)
     files = []
     data_frames = []
     #df = pd.DataFrame()
@@ -37,7 +38,7 @@ async def main():
       inner_df = await file_handler(client, file["fileid"])
       data_frames.append(inner_df)
     df = pd.concat(data_frames)
-    
+    await dframe_handler(client, df)
 
 async def dframe_handler(client, df):
     last_date = datetime(2025, 7, 1)
