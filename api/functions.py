@@ -176,3 +176,9 @@ def parse_row(row):
   dict["report"] = row["Отчет последнего посещения"]
   dict["plan"] = row["План для следующего посещения"]
   return dict
+
+def format_headers(df):
+  headers = list(df.keys())
+  print(headers)
+  headers = list(map(lambda header: header.strip().upper(), headers))
+  print(headers)
