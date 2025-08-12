@@ -24,9 +24,7 @@ eapi = "https://eapi.pcloud.com/"
 token = "AT2fZ89VHkDT7OaQZMlMlVkZdslpGwQPJNbTKpnbvQtbO8yBYcny"
 headers = {"Authorization": f"Bearer {token}"}
 
-async def main():
-  last_date = datetime(2025, 7, 1)
-  dates = await get_dates()
+async def main():  
   async with httpx.AsyncClient() as client:
     files = []
     data_frames = []
@@ -39,12 +37,22 @@ async def main():
       inner_df = await file_handler(client, file["fileid"])
       data_frames.append(inner_df)
     df = pd.concat(data_frames)
+    
+
+async def dframe_handler(client, df):
+    last_date = datetime(2025, 7, 1)
+    dates = await get_dates()
     df = df.sort_by_value(by=["ИНН", "Дата последнего посещения"])
     pd.options.display.max_rows = 999
     for date in df["Дата последнего посещения"]:
       check_date(date)
     for inn in list(set(df["ИНН"].tolist())):
-      
+      rows = df[df["ИНН"] == inn]
+      for row in rows:
+         print(row["Дата последнего посещения"])
+         if isinstance(row["Дата последнего посещения"], pd.Timestamp):
+           print("timestamp")
+        
 async def file_handler(client, fileid):
     url = await get_link(client, fileid)
     response = await client.get(url)
