@@ -52,9 +52,9 @@ async def dframe_handler(client, df):
       rows = df[df["инн"] == inn]
       print("ИНН: ", inn)
       for index, row in rows.iterrows():
-         print("last visit: ", row["Дата последнего посещения"])
-         if isinstance(row["Дата последнего посещения"], pd.Timestamp):
-           print("timestamp")       
+         print("last visit: ", row["Дата последнего посещения"], isinstance(row["Дата последнего посещения"], pd.Timestamp), type(row["Дата последнего посещения"]))
+         #if isinstance(row["Дата последнего посещения"], pd.Timestamp):
+         #print("timestamp")       
         
 async def file_handler(client, fileid):
     url = await get_link(client, fileid)
