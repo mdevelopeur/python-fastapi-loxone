@@ -51,6 +51,8 @@ async def dframe_handler(client, df):
     for inn in list(set(df["инн"].tolist())):
       rows = df[df["инн"] == inn]
       print("rows: ", rows)
+      for index, row in rows.iterrows():
+         print("last visit: ", row["Дата последнего посещения"])
       for row in rows:
          print(row)
          print("row: ", row["Дата последнего посещения"])
