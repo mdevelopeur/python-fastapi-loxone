@@ -49,7 +49,7 @@ async def dframe_handler(client, df):
       ...
       #check_date(date)
     data = {}
-    for inn in list(set(df["инн"].tolist())):
+    for inn in list(set(df["ИНН"].tolist())):
       rows = df[df["ИНН"] == inn]
       print("ИНН: ", inn)
       data[inn] = []
@@ -182,11 +182,11 @@ def parse_row(row):
 
 def format_headers(df):
   headers = list(df.keys())
-  print(headers)
+  #print(headers)
   headers = df.columns.tolist()
-  print(headers)
+  #print(headers)
   formatted_headers = list(map(lambda header: header.strip().upper(), headers))
-  print(headers)
+  #print(headers)
   df = df.rename(columns=dict(zip(headers, formatted_headers)))
-  print(list(df.keys()))
+  #print(list(df.keys()))
   return df
