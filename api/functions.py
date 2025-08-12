@@ -43,12 +43,12 @@ async def main():
 async def dframe_handler(client, df):
     last_date = datetime(2025, 7, 1)
     dates = await get_dates()
-    df = df.sort_values(by=["ИНН", "Дата последнего посещения"])
+    df = df.sort_values(by=["инн", "Дата последнего посещения"])
     pd.options.display.max_rows = 999
     for date in df["Дата последнего посещения"]:
       check_date(date)
-    for inn in list(set(df["ИНН"].tolist())):
-      rows = df[df["ИНН"] == inn]
+    for inn in list(set(df["инн"].tolist())):
+      rows = df[df["инн"] == inn]
       for row in rows:
          print(row["Дата последнего посещения"])
          if isinstance(row["Дата последнего посещения"], pd.Timestamp):
