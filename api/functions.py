@@ -159,4 +159,5 @@ def convert_date(date):
     return date.to_pydatetime()
   elif isinstance(date, datetime):
     return date
-  else return 0
+  else:
+    return 0
