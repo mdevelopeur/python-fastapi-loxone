@@ -67,12 +67,14 @@ async def file_handler(client, fileid):
     try:
       df = pd.read_excel(file, engine='openpyxl')
       #print(df.head())
+      format_headers(df)
       return df
     except Exception as e:      
       print(f"Error reading Excel file: {e}")
       try:
         df = pd.read_excel(file, engine='xlrd')
         #print(df.head())
+        format_headers(df)
         return df
       except Exception as e:      
         print(f"Error reading Excel file: {e}")
