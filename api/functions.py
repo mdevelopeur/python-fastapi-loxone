@@ -172,7 +172,7 @@ async def get_dates():
   for item in data:
     date = datetime.fromtimestamp(int(item["time"]))
     dates[item["id"]] = date
-  
+  print("Dates: ", dates)
   return dates
 
 def convert_date(date):
@@ -212,8 +212,12 @@ async def process_data(client, data):
   print(companies.keys())
   for key in keys:
     print("ИНН: ", key)
-    company = companies[key]
-    date = dates[key]
-    reports = list(filter(lambda item: isinstance(item["last_visit"], datetime), data[key]))
-    reports.sort(key=lambda item: item["last visit"])
-    print(reports[0])
+    try:
+      company = companies.get(key)
+      date = dates.get(key)
+      reports = list(filter(lambda item: isinstance(item["last_visit"], datetime), data[key]))
+      reports.sort(key=lambda item: item["last visit"])
+      print(reports[0])
+    except Exception as e:
+      print(e)
+      continue
