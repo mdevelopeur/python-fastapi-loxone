@@ -68,7 +68,13 @@ async def dframe_handler(client, df):
     return data
     
 async def file_handler(client, fileid):
-    url = await get_link(client, fileid)
+    try:
+      url = await get_link(client, fileid)
+    except Exception as e:
+      print(e)
+      df = pd.DataFrame()
+      #format_headers(df)
+      return df
     response = await client.get(url)
     file = io.BytesIO(response.content)
     try:
