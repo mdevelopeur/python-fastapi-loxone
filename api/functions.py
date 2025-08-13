@@ -215,6 +215,7 @@ async def process_data(client, data):
     try:
       company = companies.get(key)
       date = dates.get(key)
+      print(data[key])
       reports = list(filter(lambda item: isinstance(item["last_visit"], datetime), data[key]))
       reports.sort(key=lambda item: item["last visit"])
       print(reports[0])
