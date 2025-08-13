@@ -147,14 +147,14 @@ async def set_comments(client, companies):
     request = f"crm.company.update?id={company['ID']}&fields[COMMENTS]={company['COMMENTS']}"
     cmd[company['ID']] = request 
   body = { "cmd": cmd }
-  response = client.post(url, json=body)
+  response = await client.post(url, json=body)
   response = response.json()
   return response["result"]["result"]
 
 async def get_comments(client):
   url = api + "crm.company.list"
   body = {"select": ["ID", "COMMENTS"]}
-  response = client.post(url, json=body)
+  response = await client.post(url, json=body)
   response = response.json()
   return response["result"]
   
