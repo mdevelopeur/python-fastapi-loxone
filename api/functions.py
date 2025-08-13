@@ -220,6 +220,7 @@ async def process_data(client, data):
       reports.sort(key=lambda item: item["last_visit"])
       print("reports length: ", len(reports))
       print(reports[0])
+      print(isinstance(reports[0]["last_visit"], datetime))
     except Exception as e:
       print("Data processing exception: ", e)
       continue
