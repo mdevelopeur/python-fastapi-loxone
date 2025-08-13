@@ -214,6 +214,7 @@ async def process_data(client, data):
     print("ИНН: ", key)
     try:
       company = companies.get(key)
+      comment = comments.get(company)
       date = dates.get(key)
       #print(data[key])
       reports = list(filter(lambda item: isinstance(item["last_visit"], datetime) and not pd.isna(item["last_visit"]), data[key]))
@@ -226,3 +227,11 @@ async def process_data(client, data):
     except Exception as e:
       print("Data processing exception: ", e)
       continue
+
+async def process_report(client, report, company, comment):
+    date = report["last_visit"]
+    if comment is None:
+      comment = report["report"]
+    else:
+      comment += report["report"]
+    
