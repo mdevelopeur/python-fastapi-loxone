@@ -131,7 +131,7 @@ def get_time(time):
 async def get_companies(client):
   url = api + "crm.requisite.list"
   body = {"select": ["ENTITY_ID", "RQ_INN"]}
-  response = client.post(url, json=body)
+  response = await client.post(url, json=body)
   response = response.json()
   companies = {}
   for item in response["result"]:
