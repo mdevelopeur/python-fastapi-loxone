@@ -209,6 +209,7 @@ async def process_data(client, data):
   comments = await get_comments(client)
   keys = list(data.keys())
   dates = await get_dates()
+  print(companies.keys())
   for key in keys:
     print("ИНН: ", key)
     company = companies[key]
