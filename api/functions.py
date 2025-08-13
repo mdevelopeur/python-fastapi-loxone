@@ -217,7 +217,7 @@ async def process_data(client, data):
       date = dates.get(key)
       print(data[key])
       reports = list(filter(lambda item: isinstance(item["last_visit"], datetime), data[key]))
-      reports.sort(key=lambda item: item["last visit"])
+      reports.sort(key=lambda item: item["last_visit"])
       print(reports[0])
     except Exception as e:
       print(e)
