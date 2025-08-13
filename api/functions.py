@@ -210,6 +210,7 @@ async def process_data(client, data):
   keys = list(data.keys())
   dates = await get_dates()
   for key in keys:
+    print("ИНН: ", key)
     company = companies[key]
     date = dates[key]
     reports = list(filter(lambda item: isinstance(item["last_visit"], datetime), data[key]))
