@@ -220,7 +220,7 @@ async def process_data(client, data):
       #reports = list(filter(lambda item: isinstance(item["last_visit"], datetime), data[key]))
       reports.sort(key=lambda item: item["last_visit"])
       print("reports length: ", len(reports))
-      print(isinstance(reports[0]["last_visit"], datetime), pd.isna(item["last_visit"]))
+      print(isinstance(reports[0]["last_visit"], datetime), pd.isna(reports[0]["last_visit"]))
       print(reports[0])
       
     except Exception as e:
