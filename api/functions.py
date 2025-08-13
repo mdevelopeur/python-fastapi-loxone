@@ -216,12 +216,13 @@ async def process_data(client, data):
       company = companies.get(key)
       date = dates.get(key)
       print(data[key])
-      reports = list(filter(lambda item: isinstance(item["last_visit"] and not pd.isna(item["last_visit"]), datetime), data[key]))
+      reports = list(filter(lambda item: (isinstance(item["last_visit"] and not pd.isna(item["last_visit"])), datetime), data[key]))
       #reports = list(filter(lambda item: isinstance(item["last_visit"], datetime), data[key]))
       reports.sort(key=lambda item: item["last_visit"])
       print("reports length: ", len(reports))
+      print(isinstance(reports[0]["last_visit"], datetime), pd.isna(item["last_visit"]))
       print(reports[0])
-      print(isinstance(reports[0]["last_visit"], datetime))
+      
     except Exception as e:
       print("Data processing exception: ", e)
       continue
