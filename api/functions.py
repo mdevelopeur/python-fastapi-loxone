@@ -228,12 +228,12 @@ async def process_data(client, data):
   all_dates = await get_all_dates(r)
   print(companies.keys())
   for key in keys:
-    if not key or math.isna(key):
+    if key == '' or math.isna(key):
       continue 
     try:
       key = int(key)
-    except Exception as e:
-      print(e)
+    except:
+      print("error")
       continue
     print("ИНН: ", key)
     try:
