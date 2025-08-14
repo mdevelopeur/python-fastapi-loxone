@@ -204,9 +204,10 @@ def parse_row(row):
   #dict["addre
   #else:
   #return False
-  last_date = last_date.strftime("%d.%m.%y")
-  next_date = next_date.strftime("%d.%m.%y")
-  dict["report"] = f"{last_date}:\n{row["ОТЧЕТ ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]}"
+  if last_date:
+    last_date = last_date.strftime("%d.%m.%y")
+    #next_date = next_date.strftime("%d.%m.%y")
+    dict["report"] = f"{last_date}:\n{row["ОТЧЕТ ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]}"
   dict["plan"] = row["ПЛАН ДЛЯ СЛЕДУЮЩЕГО ПОСЕЩЕНИЯ"]
   return dict
 
