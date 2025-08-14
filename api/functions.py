@@ -2,6 +2,7 @@ from urllib.parse import unquote
 from datetime import datetime
 import httpx
 import re
+import math
 import asyncio
 #import asyncpg
 import time
@@ -227,7 +228,10 @@ async def process_data(client, data):
   all_dates = await get_all_dates(r)
   print(companies.keys())
   for key in keys:
-    key = str(int(key))
+    if not math.isnan(key):
+      key = str(int(key))
+    else:
+      key = 0
     print("ИНН: ", key)
     try:
       company = companies.get(key)
