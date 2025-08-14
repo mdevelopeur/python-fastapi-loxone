@@ -267,7 +267,7 @@ async def process_report(client, report, company, comment):
 async def process_plan(client, plan, company, comment):
   url = api + "crm.activity.todo.add"
   deadline = plan["next_visit"].strftime("%Y-%m-%dT%H:%M:%S")
-  body = {"ownerTypeId": 4, "ownerId": company, "deadline": deadline, title: "Проверка", description: plan["plan"]}
+  body = {"ownerTypeId": 4, "ownerId": company, "deadline": deadline, "title": "Проверка", "description": plan["plan"]}
   response = await client.post(url, json=body)
   response = response.json()
   if response.get("result") is not None:
