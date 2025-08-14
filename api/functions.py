@@ -256,7 +256,7 @@ async def process_report(client, report, company, comment):
     else:
       comment += f"\n{report["report"]}"
     url = api + "crm.company.update"
-    body = {"ID": company, "fields":{"COMMENTS": comment}}
+    body = {"id": company, "fields":{"COMMENTS": comment}}
     print(body)
     response = await client.post(url, json=body)
   
