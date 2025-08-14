@@ -270,7 +270,7 @@ async def process_plan(client, plan, company, comment):
   response = await client.post(url, json=body)
   response = response.json()
   if response.get("result") is not None:
-    if "id" in response["result"]
+    if "id" in response["result"]:
       return True 
   
   return False  
