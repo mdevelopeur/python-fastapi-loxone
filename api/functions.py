@@ -231,7 +231,7 @@ async def process_data(client, data):
       company = companies.get(key)
       comment = comments.get(company)
       dates = get_dates(all_dates, key)
-      reports = list(filter(lambda item: isinstance(item["last_visit"], datetime) and not pd.isna(item["last_visit"]) and item["last_visit"] > dates["last_date"], data[key]))
+      reports = list(filter(lambda item: isinstance(item["last_visit"], datetime) and not pd.isna(item["last_visit"]) and item["last_visit"] > dates["last"], data[key]))
       reports.sort(key=lambda item: item["last_visit"])
       #print
       report_processed = await process_report(client, reports[0], company, comment)
