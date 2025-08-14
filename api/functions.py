@@ -196,12 +196,14 @@ def parse_row(row):
   dict = {}
   last_date = convert_date(row["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"])
   next_date = convert_date(row["ДАТА СЛЕДУЮЩЕГО ПОСЕЩЕНИЯ"])
-  if last_date and next_date:
+  #if last_date and next_date:
     #print(last_date, next_date)
-    dict["last_visit"] = last_date
-    dict["next_visit"] = next_date
-  else:
-    return False
+  dict["last_visit"] = last_date
+  dict["next_visit"] = next_date
+  #dict["name"] = row["ЛПУ"]
+  #dict["addre
+  #else:
+  #return False
   last_date = last_date.strftime("%d.%m.%y")
   next_date = next_date.strftime("%d.%m.%y")
   dict["report"] = f"{last_date}:\n{row["ОТЧЕТ ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]}"
@@ -230,6 +232,8 @@ async def process_data(client, data):
       dates = get_dates(all_dates, key)
       reports = list(filter(lambda item: isinstance(item["last_visit"], datetime) and not pd.isna(item["last_visit"]) and item["last_visit"] > dates["last_date"], data[key]))
       reports.sort(key=lambda item: item["last_visit"])
+      #print
+      
       report_processed = await process_report(client, reports[0], company, comment)
       plans = list(filter(lambda item: isinstance(item["next_visit"], datetime) and not pd.isna(item["next_visit"]), data[key]))
       plans.sort(key=lambda item: item["next_visit"])
@@ -260,5 +264,13 @@ async def process_report(client, report, company, comment):
     else:
       return False
       
-async def process_plan(client, r, plan, company, comment):
-  
+async def process_plan(client, plan, company, comment):
+  url = api + "crm.activity.todo.add"
+  deadline = plan["next_visit"].strftime("%Y-%m-%dT%H:%M:%S")
+  body = {"ownerTypeId": 4, "ownerId": company, "deadline": deadline, title: "Проверка", description: plan["plan"]}
+  response = await client.post(url, json=body)
+  response = response.json()
+  if response.get("result") == True:
+      return True 
+  else:
+      return False  
