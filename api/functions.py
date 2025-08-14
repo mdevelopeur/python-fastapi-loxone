@@ -229,7 +229,8 @@ async def process_data(client, data):
   all_dates = await get_all_dates(r)
   print(companies.keys())
   for key in keys:
-    if not isinstance(key, numbers.Number) or math.isna(key):
+    print("key: ", key)
+    if isinstance(key, str) or math.isna(key):
       continue 
     try:
       key = int(key)
