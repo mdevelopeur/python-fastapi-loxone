@@ -214,7 +214,7 @@ async def process_data(client, data):
     print("ИНН: ", key)
     try:
       company = companies.get(key)
-      comment = comments.get(company)
+      comment = list(filter(lambda item: item["ID"] == company, comments))
       date = dates.get(key)
       #print(data[key])
       reports = list(filter(lambda item: isinstance(item["last_visit"], datetime) and not pd.isna(item["last_visit"]), data[key]))
