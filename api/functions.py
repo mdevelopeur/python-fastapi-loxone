@@ -156,7 +156,10 @@ async def get_comments(client):
   body = {"select": ["ID", "COMMENTS"]}
   response = await client.post(url, json=body)
   response = response.json()
-  return response["result"]
+  comments = {}
+  for item in response["result"]:
+    comments[item["ID"]] = item["COMMENTS"]
+  return comments 
   
 def check_date(date):
   print(date, type(date))
@@ -214,7 +217,8 @@ async def process_data(client, data):
     print("ИНН: ", key)
     try:
       company = companies.get(key)
-      comment = list(filter(lambda item: item["ID"] == company, comments))
+      comment = comments.get(company)
+      #comment = list(filter(lambda item: item["ID"] == company, comments))
       date = dates.get(key)
       #print(data[key])
       reports = list(filter(lambda item: isinstance(item["last_visit"], datetime) and not pd.isna(item["last_visit"]), data[key]))
