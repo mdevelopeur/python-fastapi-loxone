@@ -137,12 +137,12 @@ async def get_companies(client):
   response = response.json()
   companies = {}
   for item in response["result"]:
-    print(item)
+    #print(item)
     try:
       #inn = int(item["RQ_INN"])
       companies[int(item["RQ_INN"])] = item["ENTITY_ID"]
     except Exception as e:
-      print(e)
+      #print(e)
       continue 
   #companies = list(map(lambda item: {item["RQ_INN"]: item["ENTITY_ID"]}, response["result"]))
   print(companies)
@@ -234,6 +234,7 @@ async def process_data(client, data):
   keys = list(data.keys())
   all_dates = await get_all_dates(r)
   print(companies.keys())
+  print(keys)
   for key in keys:
     print("key: ", key)
     if not isinstance(key, int) and not isinstance(key, float) or math.isnan(key):
