@@ -236,7 +236,7 @@ async def process_data(client, data):
   print(companies.keys())
   for key in keys:
     print("key: ", key)
-    if not isinstance(key, int) and not isinstance(key, float) or math.isna(key):
+    if not isinstance(key, int) and not isinstance(key, float) or math.isnan(key):
       continue 
     try:
       key = int(key)
