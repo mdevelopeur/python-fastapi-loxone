@@ -227,7 +227,7 @@ async def process_data(client, data):
   all_dates = await get_all_dates(r)
   print(companies.keys())
   for key in keys:
-    key = str(key)
+    key = str(int(key))
     print("ИНН: ", key)
     try:
       company = companies.get(key)
