@@ -136,7 +136,7 @@ async def get_companies(client):
   response = response.json()
   companies = {}
   for item in response["result"]:
-    companies[item["RQ_INN"]] = item["ENTITY_ID"]
+    companies[int(item["RQ_INN"])] = item["ENTITY_ID"]
   #companies = list(map(lambda item: {item["RQ_INN"]: item["ENTITY_ID"]}, response["result"]))
   print(companies)
   return companies 
@@ -229,7 +229,7 @@ async def process_data(client, data):
   print(companies.keys())
   for key in keys:
     if not math.isnan(key):
-      key = str(int(key))
+      key = int(key)
     else:
       continue
     print("ИНН: ", key)
