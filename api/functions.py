@@ -137,6 +137,7 @@ async def get_companies(client):
   response = response.json()
   companies = {}
   for item in response["result"]:
+    print(item)
     try:
       #inn = int(item["RQ_INN"])
       companies[int(item["RQ_INN"])] = item["ENTITY_ID"]
