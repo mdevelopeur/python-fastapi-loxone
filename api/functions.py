@@ -164,7 +164,7 @@ async def get_comments(client):
 def check_date(date):
   print(date, type(date))
 
-async def get_dates():
+async def get_saved_dates():
   r = redis.from_url(redis_url, decode_responses=True)
   pipeline = r.pipeline()
   keys = r.keys()
@@ -179,6 +179,9 @@ async def get_dates():
   print("Dates: ", dates)
   return dates
 
+def get_dates(data, inn):
+  ...
+  #if inn
 def convert_date(date):
   if isinstance(date, pd.Timestamp):
     return date.to_pydatetime()
@@ -226,8 +229,9 @@ async def process_data(client, data):
       next_date = dates.get(key,{}).get("next_date", 0)
       reports = list(filter(lambda item: isinstance(item["last_visit"], datetime) and not pd.isna(item["last_visit"]) and, data[key]))
       reports.sort(key=lambda item: item["last_visit"])
+      '''
       if reports[0]["last_visit"] > last_date:
-        result = await process_report(client, report, company, comment)
+        #result = await process_report(client, report, company, comment)
         if result:
           last_date = reports[0]["last_visit"]
       plans = list(filter(lambda item: isinstance(item["next_visit"], datetime) and not pd.isna(item["next_visit"]), data[key]))
@@ -236,6 +240,7 @@ async def process_data(client, data):
         result = await process_plan(client, plans[0], company, comment)
         if result:
           last_date = reports[0]["last_visit"]
+      '''
       print("reports length: ", len(reports))
       print(isinstance(reports[0]["last_visit"], datetime), pd.isna(reports[0]["last_visit"]))
       print(reports[0])
