@@ -259,6 +259,7 @@ async def process_report(client, report, company, comment):
     body = {"id": company, "fields":{"COMMENTS": comment}}
     response = await client.post(url, json=body)
     response = response.json()
+    print(response)
     if response.get("result") == True:
       return True 
     else:
@@ -270,6 +271,7 @@ async def process_plan(client, plan, company, comment):
   body = {"ownerTypeId": 4, "ownerId": company, "deadline": deadline, "title": "Проверка", "description": plan["plan"]}
   response = await client.post(url, json=body)
   response = response.json()
+  print(response)
   if response.get("result") is not None:
     if "id" in response["result"]:
       return True 
