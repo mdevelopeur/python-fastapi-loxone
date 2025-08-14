@@ -173,8 +173,9 @@ async def get_dates():
   data = pipeline.execute()
   dates = {}
   for item in data:
-    date = datetime.fromtimestamp(int(item["time"]))
-    dates[item["id"]] = date
+    last_date = datetime.fromtimestamp(int(item.get("last_time", 0)))
+    next_date = datetime.fromtimestamp(int(item.get("next_time", 0)))
+    dates[item["id"]] = {"last_date": last_date, "next_date": next_date}
   print("Dates: ", dates)
   return dates
 
@@ -196,7 +197,9 @@ def parse_row(row):
     dict["next_visit"] = next_date
   else:
     return False
-  dict["report"] = row["ОТЧЕТ ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]
+  last_date = last_date.strftime("%d.%m.%y")
+  next_date = next_date.strftime("%d.%m.%y")
+  dict["report"] = f"{last_date}:\n{row["ОТЧЕТ ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]}"
   dict["plan"] = row["ПЛАН ДЛЯ СЛЕДУЮЩЕГО ПОСЕЩЕНИЯ"]
   return dict
 
@@ -208,22 +211,31 @@ def format_headers(df):
   return df
 
 async def process_data(client, data):
+  r = redis.from_url(redis_url, decode_responses=True)
   companies = await get_companies(client)
   comments = await get_comments(client)
   keys = list(data.keys())
-  dates = await get_dates()
+  dates = await get_dates(r)
   print(companies.keys())
   for key in keys:
     print("ИНН: ", key)
     try:
       company = companies.get(key)
       comment = comments.get(company)
-      #comment = list(filter(lambda item: item["ID"] == company, comments))
-      date = dates.get(key)
-      #print(data[key])
-      reports = list(filter(lambda item: isinstance(item["last_visit"], datetime) and not pd.isna(item["last_visit"]), data[key]))
-      #reports = list(filter(lambda item: isinstance(item["last_visit"], datetime), data[key]))
+      last_date = dates.get(key,{}).get("last_date", 0)
+      next_date = dates.get(key,{}).get("next_date", 0)
+      reports = list(filter(lambda item: isinstance(item["last_visit"], datetime) and not pd.isna(item["last_visit"]) and, data[key]))
       reports.sort(key=lambda item: item["last_visit"])
+      if reports[0]["last_visit"] > last_date:
+        result = await process_report(client, report, company, comment)
+        if result:
+          last_date = reports[0]["last_visit"]
+      plans = list(filter(lambda item: isinstance(item["next_visit"], datetime) and not pd.isna(item["next_visit"]), data[key]))
+      plans.sort(key=lambda item: item["next_visit"])
+      if plans[0]["next_visit"] > next_date:
+        result = await process_plan(client, plans[0], company, comment)
+        if result:
+          last_date = reports[0]["last_visit"]
       print("reports length: ", len(reports))
       print(isinstance(reports[0]["last_visit"], datetime), pd.isna(reports[0]["last_visit"]))
       print(reports[0])
@@ -237,9 +249,15 @@ async def process_report(client, report, company, comment):
     if comment is None:
       comment = report["report"]
     else:
-      comment += report["report"]
+      comment += f"\n{report["report"]}"
     url = api + "crm.company.update"
     body = {"id": company, "fields":{"COMMENTS": comment}}
     response = await client.post(url, json=body)
-
-
+    response = response.json()
+    if response.get("result") == True:
+      return True 
+    else:
+      return False
+      
+async def process_plan(client, r, plan, company, comment):
+  
