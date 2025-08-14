@@ -137,7 +137,12 @@ async def get_companies(client):
   response = response.json()
   companies = {}
   for item in response["result"]:
-    companies[int(item["RQ_INN"])] = item["ENTITY_ID"]
+    try:
+      #inn = int(item["RQ_INN"])
+      companies[int(item["RQ_INN"])] = item["ENTITY_ID"]
+    except Exception as e:
+      print(e)
+      continue 
   #companies = list(map(lambda item: {item["RQ_INN"]: item["ENTITY_ID"]}, response["result"]))
   print(companies)
   return companies 
