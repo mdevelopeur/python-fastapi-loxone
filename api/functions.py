@@ -256,8 +256,11 @@ async def process_report(client, report, company, comment):
     else:
       comment += f"\n{report["report"]}"
     url = api + "crm.company.update"
-    body = {"id": company, "fields":{"COMMENTS": comment}}
+    body = {"ID": company, "fields":{"COMMENTS": comment}}
+    print(body)
     response = await client.post(url, json=body)
+  
+  
     response = response.json()
     print(response)
     if response.get("result") == True:
@@ -268,7 +271,7 @@ async def process_report(client, report, company, comment):
 async def process_plan(client, plan, company, comment):
   url = api + "crm.activity.todo.add"
   deadline = plan["next_visit"].strftime("%Y-%m-%dT%H:%M:%S")
-  body = {"ownerTypeId": 4, "ownerId": company, "deadline": deadline, "title": "Проверка", "description": plan["plan"]}
+  body = {"ownerTypeId": 4, "ownerId": int(company), "deadline": deadline, "title": "Проверка", "description": plan["plan"]}
   response = await client.post(url, json=body)
   response = response.json()
   print(response)
