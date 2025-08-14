@@ -231,7 +231,7 @@ async def process_data(client, data):
     if not math.isnan(key):
       key = str(int(key))
     else:
-      key = 0
+      continue
     print("ИНН: ", key)
     try:
       company = companies.get(key)
