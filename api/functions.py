@@ -190,7 +190,7 @@ def convert_date(date):
   elif isinstance(date, datetime):
     return date
   else:
-    return 0
+    return pd.NaT
 
 def parse_row(row):
   dict = {}
@@ -204,7 +204,7 @@ def parse_row(row):
   #dict["addre
   #else:
   #return False
-  if last_date:
+  if not pd.isna(last_date):
     last_date = last_date.strftime("%d.%m.%y")
     #next_date = next_date.strftime("%d.%m.%y")
     dict["report"] = f"{last_date}:\n{row["ОТЧЕТ ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]}"
