@@ -43,7 +43,7 @@ async def main():
     
 async def dframe_handler(client, df):
     check_date = datetime(2025, 7, 1)
-    dates = await get_dates()
+    #dates = await get_dates()
     df = df.sort_values(by=["ИНН", "ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"])
     pd.options.display.max_rows = 999
     for date in df["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]:
@@ -165,7 +165,7 @@ def check_date(date):
   print(date, type(date))
 
 async def get_all_dates(r):
-  r = redis.from_url(redis_url, decode_responses=True)
+  #r = redis.from_url(redis_url, decode_responses=True)
   pipeline = r.pipeline()
   keys = r.keys()
   for key in keys:
