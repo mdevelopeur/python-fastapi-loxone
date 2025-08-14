@@ -137,6 +137,7 @@ async def get_companies(client):
   for item in response["result"]:
     companies[item["RQ_INN"]] = item["ENTITY_ID"]
   #companies = list(map(lambda item: {item["RQ_INN"]: item["ENTITY_ID"]}, response["result"]))
+  print(companies)
   return companies 
 
 async def set_comments(client, companies):
@@ -229,15 +230,24 @@ async def process_data(client, data):
     print("ИНН: ", key)
     try:
       company = companies.get(key)
+      
       comment = comments.get(company)
       dates = get_dates(all_dates, key)
       reports = list(filter(lambda item: isinstance(item["last_visit"], datetime) and not pd.isna(item["last_visit"]) and item["last_visit"] > dates["last"], data[key]))
       reports.sort(key=lambda item: item["last_visit"])
       #print
-      report_processed = await process_report(client, reports[0], company, comment)
+      if company is None:
+        continue
+      if len(reports) > 0:
+        report_processed = await process_report(client, reports[0], company, comment)
+      else:
+        report_processed = False
       plans = list(filter(lambda item: isinstance(item["next_visit"], datetime) and not pd.isna(item["next_visit"]), data[key]))
       plans.sort(key=lambda item: item["next_visit"])
-      plan_processed = await process_plan(client, plans[0], company, comment)
+      if len(plans) > 0:
+        plan_processed = await process_plan(client, plans[0], company, comment)
+      else:
+        plan_processed = False
       if report_processed or plan_processed:
         r.hset(key, mapping={"id": key, "last": dates["last"].timestamp(), "next": dates["next"].timestamp()})
         return
@@ -247,7 +257,7 @@ async def process_data(client, data):
       
     except Exception as e:
       print("Data processing exception: ", e)
-      continue
+      return
 
 async def process_report(client, report, company, comment):
     date = report["last_visit"]
