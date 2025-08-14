@@ -233,7 +233,6 @@ async def process_data(client, data):
       reports = list(filter(lambda item: isinstance(item["last_visit"], datetime) and not pd.isna(item["last_visit"]) and item["last_visit"] > dates["last_date"], data[key]))
       reports.sort(key=lambda item: item["last_visit"])
       #print
-      
       report_processed = await process_report(client, reports[0], company, comment)
       plans = list(filter(lambda item: isinstance(item["next_visit"], datetime) and not pd.isna(item["next_visit"]), data[key]))
       plans.sort(key=lambda item: item["next_visit"])
@@ -270,7 +269,8 @@ async def process_plan(client, plan, company, comment):
   body = {"ownerTypeId": 4, "ownerId": company, "deadline": deadline, title: "Проверка", description: plan["plan"]}
   response = await client.post(url, json=body)
   response = response.json()
-  if response.get("result") == True:
+  if response.get("result") is not None:
+    if "id" in response["result"]
       return True 
-  else:
-      return False  
+  
+  return False  
