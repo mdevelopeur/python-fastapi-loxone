@@ -54,7 +54,7 @@ async def dframe_handler(client, df):
     for inn in list(set(df["ИНН"].tolist())):
       inn = check_rq(inn)
       if inn:
-        print("ИНН в data: ", inn)
+        #print("ИНН в data: ", inn)
         rows = df[df["ИНН"] == inn]
         data[inn] = []
         for index, row in rows.iterrows():
