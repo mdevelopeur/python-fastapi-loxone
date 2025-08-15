@@ -273,19 +273,19 @@ async def process_data(client, data):
           print(report["last_visit"], dates["last"], report["last_visit"] > dates["last"]) 
         reports.sort(key=lambda item: item["last_visit"])
         if len(reports) > 0:
-          ...
-          #report_processed = await process_report(client, reports[0], company)
+          
+          report_processed = await process_report(client, reports[0], company)
         else:
           report_processed = False
         plans = list(filter(lambda item: isinstance(item["next_visit"], datetime) and not pd.isna(item["next_visit"]) and item["next_visit"] > dates["next"], data[key]))
         plans.sort(key=lambda item: item["next_visit"])
         if len(plans) > 0:
-          ...
-          #plan_processed = await process_plan(client, plans[0], company)
+          
+          plan_processed = await process_plan(client, plans[0], company)
         else:
           plan_processed = False
         if report_processed or plan_processed:
-          r.hset(key, mapping={"id": key, "last": dates["last"].timestamp(), "next": dates["next"].timestamp()})
+          r.hset(key, mapping={"id": key, "last": reports[0]["last_visit"].timestamp(), "next": reports[0]["next_visit"].timestamp()})
           return
         print("reports length: ", len(reports))
         print(isinstance(reports[0]["last_visit"], datetime), pd.isna(reports[0]["last_visit"]))
