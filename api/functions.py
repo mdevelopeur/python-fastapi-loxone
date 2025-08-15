@@ -265,7 +265,7 @@ async def process_data(client, data):
           report_processed = await process_report(client, reports[0], company)
         else:
           report_processed = False
-        plans = list(filter(lambda item: isinstance(item["next_visit"], datetime) and not pd.isna(item["next_visit"]), data[key]))
+        plans = list(filter(lambda item: isinstance(item["next_visit"], datetime) and not pd.isna(item["next_visit"]) and item["next_visit"] > dates["next"], data[key]))
         plans.sort(key=lambda item: item["next_visit"])
         if len(plans) > 0:
           plan_processed = await process_plan(client, plans[0], company)
@@ -283,6 +283,7 @@ async def process_data(client, data):
         return
 
 async def process_report(client, report, company):
+    print(report)
     date = report["last_visit"]
     '''
     if comment is None:
@@ -302,6 +303,7 @@ async def process_report(client, report, company):
       return False
       
 async def process_plan(client, plan, company):
+  print(plan)
   url = api + "crm.activity.todo.add"
   deadline = plan["next_visit"].strftime("%Y-%m-%dT%H:%M:%S")
   body = {"ownerTypeId": 4, "ownerId": int(company), "deadline": deadline, "title": "Проверка", "description": plan["plan"]}
