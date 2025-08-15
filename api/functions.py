@@ -139,12 +139,6 @@ def get_time(time):
   return updated
 
 async def get_company(client, rq):
-  try:
-    rq = str(int(rq))
-  except:
-    return False
-  if len(rq) != 10:
-    return False
   url = api + "crm.requisite.list"
   body = {"select": ["ENTITY_ID", "RQ_INN"], "filter": {"ENTITY_TYPE_ID": 4, "RQ_INN": rq}}
   response = await client.post(url, json=body)
@@ -260,45 +254,34 @@ async def process_data(client, data):
   print(companies.keys())
   print(keys)
   for key in keys:
-    print("key: ", key)
-    if not isinstance(key, int) and not isinstance(key, float) or math.isnan(key):
-      continue 
-    try:
-      key = int(key)
-    except:
-      print("error")
-      continue
     print("ИНН: ", key)
-    try:
-      company = companies.get(key)
+    company = await get_company(client, key)
+    if company: 
+      try:  
+        comment = comments.get(company)
+        dates = get_dates(all_dates, key)
+        reports = list(filter(lambda item: isinstance(item["last_visit"], datetime) and not pd.isna(item["last_visit"]) and item["last_visit"] > dates["last"], data[key]))
+        reports.sort(key=lambda item: item["last_visit"])
+        if len(reports) > 0:
+          report_processed = await process_report(client, reports[0], company, comment)
+        else:
+          report_processed = False
+        plans = list(filter(lambda item: isinstance(item["next_visit"], datetime) and not pd.isna(item["next_visit"]), data[key]))
+        plans.sort(key=lambda item: item["next_visit"])
+        if len(plans) > 0:
+          plan_processed = await process_plan(client, plans[0], company, comment)
+        else:
+          plan_processed = False
+        if report_processed or plan_processed:
+          r.hset(key, mapping={"id": key, "last": dates["last"].timestamp(), "next": dates["next"].timestamp()})
+          return
+        print("reports length: ", len(reports))
+        print(isinstance(reports[0]["last_visit"], datetime), pd.isna(reports[0]["last_visit"]))
+        #print(reports[0])
       
-      comment = comments.get(company)
-      dates = get_dates(all_dates, key)
-      reports = list(filter(lambda item: isinstance(item["last_visit"], datetime) and not pd.isna(item["last_visit"]) and item["last_visit"] > dates["last"], data[key]))
-      reports.sort(key=lambda item: item["last_visit"])
-      #print
-      if company is None:
-        continue
-      if len(reports) > 0:
-        report_processed = await process_report(client, reports[0], company, comment)
-      else:
-        report_processed = False
-      plans = list(filter(lambda item: isinstance(item["next_visit"], datetime) and not pd.isna(item["next_visit"]), data[key]))
-      plans.sort(key=lambda item: item["next_visit"])
-      if len(plans) > 0:
-        plan_processed = await process_plan(client, plans[0], company, comment)
-      else:
-        plan_processed = False
-      if report_processed or plan_processed:
-        r.hset(key, mapping={"id": key, "last": dates["last"].timestamp(), "next": dates["next"].timestamp()})
+      except Exception as e:
+        print("Data processing exception: ", e)
         return
-      print("reports length: ", len(reports))
-      print(isinstance(reports[0]["last_visit"], datetime), pd.isna(reports[0]["last_visit"]))
-      #print(reports[0])
-      
-    except Exception as e:
-      print("Data processing exception: ", e)
-      return
 
 async def process_report(client, report, company, comment):
     date = report["last_visit"]
