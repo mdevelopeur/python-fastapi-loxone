@@ -213,8 +213,8 @@ def get_dates(dates, inn):
   if inn not in dates:
     dates[inn] = {}
   print(inn, "dates: ", dates[inn])
-  dates[inn]["last"] = datetime.fromtimestamp(int(dates[inn].get("last", 0)))
-  dates[inn]["next"] = datetime.fromtimestamp(int(dates[inn].get("next", 0)))
+  dates[inn]["last"] = datetime.fromtimestamp(int(float(dates[inn].get("last", 0))))
+  dates[inn]["next"] = datetime.fromtimestamp(int(float(dates[inn].get("next", 0))))
   return dates[inn]
 
 def convert_date(date):
