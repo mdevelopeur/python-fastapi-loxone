@@ -235,8 +235,16 @@ def parse_row(row):
   if not pd.isna(last_date):
     last_date = last_date.strftime("%d.%m.%y")
     #next_date = next_date.strftime("%d.%m.%y")
-    dict["report"] = f"{last_date}:\n{row["ОТЧЕТ ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]}"
-  dict["plan"] = row["ПЛАН ДЛЯ СЛЕДУЮЩЕГО ПОСЕЩЕНИЯ"]
+    report = row["ОТЧЕТ ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]
+    if not isinstance(report, str):
+      report = ""
+    dict["report"] = f"{last_date}:\n{report}"
+  if not pd.isna(next_date):
+    plan = row["ПЛАН ДЛЯ СЛЕДУЮЩЕГО ПОСЕЩЕНИЯ"]
+    if not isinstance(plan, str):
+      plan = ""    
+    next_date = next_date.strftime("%d.%m.%y")
+    dict["plan"] = f"{next_date}:\n{plan}"
   return dict
 
 def format_headers(df):
