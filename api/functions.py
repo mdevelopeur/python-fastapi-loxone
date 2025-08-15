@@ -143,6 +143,7 @@ async def get_company(client, rq):
   body = {"select": ["ENTITY_ID", "RQ_INN"], "filter": {"ENTITY_TYPE_ID": 4, "RQ_INN": rq}}
   response = await client.post(url, json=body)
   response = response.json()
+  print(response["result"])
   if len(response["result"]) > 0:
     return response["result"][0]["ENTITY_ID"]
   else:
@@ -247,12 +248,10 @@ def format_headers(df):
 
 async def process_data(client, data):
   r = redis.from_url(redis_url, decode_responses=True)
-  companies = await get_companies(client)
   comments = await get_comments(client)
   keys = list(data.keys())
   all_dates = await get_all_dates(r)
-  print(companies.keys())
-  print(keys)
+  print("Keys: ", keys)
   for key in keys:
     print("ИНН: ", key)
     company = await get_company(client, key)
