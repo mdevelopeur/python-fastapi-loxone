@@ -51,7 +51,8 @@ async def dframe_handler(client, df):
       ...
     data = {}
     for inn in list(set(df["ИНН"].tolist())):
-      if check_rq(inn):
+      inn = check_rq(inn)
+      if inn:
         rows = df[df["ИНН"] == inn]
         data[inn] = []
         for index, row in rows.iterrows():
@@ -73,9 +74,9 @@ def check_rq(rq):
     except:
       return False
     if len(rq) != 10:
-      return True
+      return rq
     else:
-      return True
+      return False
       
 async def file_handler(client, fileid):
     try:
@@ -208,7 +209,7 @@ async def get_all_dates(r):
 def get_dates(dates, inn):
   if inn not in dates:
     dates[inn] = {}
-  print(dates[inn])
+  print(inn, "dates: ", dates[inn])
   dates[inn]["last"] = datetime.fromtimestamp(int(dates[inn].get("last", 0)))
   dates[inn]["next"] = datetime.fromtimestamp(int(dates[inn].get("next", 0)))
   return dates[inn]
@@ -288,7 +289,7 @@ async def process_data(client, data):
           plan_processed = False
           next = dates["next"]
         if report_processed or plan_processed:      
-          response = r.hset(key, mapping={"id": key, "last": last.timestamp(), "next": next.timestamp()})
+          response = r.hset(key, mapping={"id": key, "last": int(last.timestamp()), "next": int(next.timestamp())})
           print("Redis response: ", response)
           return
         print("reports length: ", len(reports))
