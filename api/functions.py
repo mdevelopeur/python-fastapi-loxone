@@ -76,7 +76,7 @@ def check_rq(rq):
     except Exception as e:
       print(rq, e)
       return False
-    if len(rq) != 10:
+    if len(rq) == 10:
       return rq
     else:
       return False
