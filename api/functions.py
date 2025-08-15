@@ -296,7 +296,7 @@ async def process_data(client, data):
           print("Redis response: ", response)
           return
         print("reports length: ", len(reports))
-        print(isinstance(reports[0]["last_visit"], datetime), pd.isna(reports[0]["last_visit"]))
+        #print(isinstance(reports[0]["last_visit"], datetime), pd.isna(reports[0]["last_visit"]))
         #print(reports[0])      
       except Exception as e:
         print("Data processing exception: ", e)
