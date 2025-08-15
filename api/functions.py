@@ -288,12 +288,10 @@ async def process_report(client, report, company, comment):
       comment = report["report"]
     else:
       comment += f"\n{report["report"]}"
-    url = api + "crm.company.update"
-    body = {"id": company, "fields":{"COMMENTS": comment}}
+    url = api + "crm.timeline.comment.add"
+    body = {"fields":{"ENTITY_ID": company,"ENTITY_TYPE": "company","COMMENT": comment}}
     print(body)
-    response = await client.post(url, json=body)
-  
-  
+    response = await client.post(url, json=body) 
     response = response.json()
     print(response)
     if response.get("result") == True:
