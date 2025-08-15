@@ -284,10 +284,12 @@ async def process_data(client, data):
 
 async def process_report(client, report, company):
     date = report["last_visit"]
+    '''
     if comment is None:
       comment = report["report"]
     else:
       comment += f"\n{report["report"]}"
+    '''
     url = api + "crm.timeline.comment.add"
     body = {"fields":{"ENTITY_ID": company,"ENTITY_TYPE": "company","COMMENT": report["report"]}}
     print(body)
