@@ -272,25 +272,27 @@ async def process_data(client, data):
         for report in reports:
           print(report["last_visit"], dates["last"], report["last_visit"] > dates["last"]) 
         reports.sort(key=lambda item: item["last_visit"])
-        if len(reports) > 0:
-          
+        if len(reports) > 0:          
           report_processed = await process_report(client, reports[0], company)
+          last = reports[0]["last_visit"]
         else:
           report_processed = False
+          last = dates["last"]
         plans = list(filter(lambda item: isinstance(item["next_visit"], datetime) and not pd.isna(item["next_visit"]) and item["next_visit"] > dates["next"], data[key]))
         plans.sort(key=lambda item: item["next_visit"])
-        if len(plans) > 0:
-          
+        if len(plans) > 0:          
           plan_processed = await process_plan(client, plans[0], company)
+          next = reports[0]["next_visit"]
         else:
           plan_processed = False
-        if report_processed or plan_processed:
-          r.hset(key, mapping={"id": key, "last": reports[0]["last_visit"].timestamp(), "next": reports[0]["next_visit"].timestamp()})
+          next = dates["next"]
+        if report_processed or plan_processed:      
+          response = r.hset(key, mapping={"id": key, "last": last.timestamp(), "next": next.timestamp()})
+          print(response)
           return
         print("reports length: ", len(reports))
         print(isinstance(reports[0]["last_visit"], datetime), pd.isna(reports[0]["last_visit"]))
-        #print(reports[0])
-      
+        #print(reports[0])      
       except Exception as e:
         print("Data processing exception: ", e)
         return
