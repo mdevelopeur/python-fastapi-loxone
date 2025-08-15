@@ -248,7 +248,7 @@ def format_headers(df):
 
 async def process_data(client, data):
   r = redis.from_url(redis_url, decode_responses=True)
-  comments = await get_comments(client)
+  #comments = await get_comments(client)
   keys = list(data.keys())
   all_dates = await get_all_dates(r)
   print("Keys: ", keys)
@@ -257,18 +257,18 @@ async def process_data(client, data):
     company = await get_company(client, key)
     if company: 
       try:  
-        comment = comments.get(company)
+        #comment = comments.get(company)
         dates = get_dates(all_dates, key)
         reports = list(filter(lambda item: isinstance(item["last_visit"], datetime) and not pd.isna(item["last_visit"]) and item["last_visit"] > dates["last"], data[key]))
         reports.sort(key=lambda item: item["last_visit"])
         if len(reports) > 0:
-          report_processed = await process_report(client, reports[0], company, comment)
+          report_processed = await process_report(client, reports[0], company)
         else:
           report_processed = False
         plans = list(filter(lambda item: isinstance(item["next_visit"], datetime) and not pd.isna(item["next_visit"]), data[key]))
         plans.sort(key=lambda item: item["next_visit"])
         if len(plans) > 0:
-          plan_processed = await process_plan(client, plans[0], company, comment)
+          plan_processed = await process_plan(client, plans[0], company)
         else:
           plan_processed = False
         if report_processed or plan_processed:
@@ -282,14 +282,14 @@ async def process_data(client, data):
         print("Data processing exception: ", e)
         return
 
-async def process_report(client, report, company, comment):
+async def process_report(client, report, company):
     date = report["last_visit"]
     if comment is None:
       comment = report["report"]
     else:
       comment += f"\n{report["report"]}"
     url = api + "crm.timeline.comment.add"
-    body = {"fields":{"ENTITY_ID": company,"ENTITY_TYPE": "company","COMMENT": comment}}
+    body = {"fields":{"ENTITY_ID": company,"ENTITY_TYPE": "company","COMMENT": report["report"]}}
     print(body)
     response = await client.post(url, json=body) 
     response = response.json()
@@ -299,7 +299,7 @@ async def process_report(client, report, company, comment):
     else:
       return False
       
-async def process_plan(client, plan, company, comment):
+async def process_plan(client, plan, company):
   url = api + "crm.activity.todo.add"
   deadline = plan["next_visit"].strftime("%Y-%m-%dT%H:%M:%S")
   body = {"ownerTypeId": 4, "ownerId": int(company), "deadline": deadline, "title": "Проверка", "description": plan["plan"]}
