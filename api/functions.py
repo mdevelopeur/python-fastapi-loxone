@@ -267,16 +267,21 @@ async def process_data(client, data):
       try:  
         #comment = comments.get(company)
         dates = get_dates(all_dates, key)
+        print(dates)     
         reports = list(filter(lambda item: isinstance(item["last_visit"], datetime) and not pd.isna(item["last_visit"]) and item["last_visit"] > dates["last"], data[key]))
+        for report in reports:
+          print(report["last_visit"], dates["last"], report["last_visit"] > dates["last"]) 
         reports.sort(key=lambda item: item["last_visit"])
         if len(reports) > 0:
-          report_processed = await process_report(client, reports[0], company)
+          ...
+          #report_processed = await process_report(client, reports[0], company)
         else:
           report_processed = False
         plans = list(filter(lambda item: isinstance(item["next_visit"], datetime) and not pd.isna(item["next_visit"]) and item["next_visit"] > dates["next"], data[key]))
         plans.sort(key=lambda item: item["next_visit"])
         if len(plans) > 0:
-          plan_processed = await process_plan(client, plans[0], company)
+          ...
+          #plan_processed = await process_plan(client, plans[0], company)
         else:
           plan_processed = False
         if report_processed or plan_processed:
