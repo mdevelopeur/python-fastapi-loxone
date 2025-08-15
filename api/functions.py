@@ -73,7 +73,8 @@ async def dframe_handler(client, df):
 def check_rq(rq):
     try:
       rq = str(int(rq))
-    except:
+    except Exception as e:
+      print(rq, e)
       return False
     if len(rq) != 10:
       return rq
