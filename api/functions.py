@@ -45,22 +45,20 @@ async def main():
     
 async def dframe_handler(client, df):
     check_date = datetime(2025, 7, 1)
-    #dates = await get_dates()
     df = df.sort_values(by=["ИНН", "ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"])
     pd.options.display.max_rows = 999
     for date in df["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]:
       ...
-      #check_date(date)
     data = {}
     for inn in list(set(df["ИНН"].tolist())):
-      rows = df[df["ИНН"] == inn]
-      #print("ИНН: ", inn)
-      data[inn] = []
-      for index, row in rows.iterrows():
-         #print("last visit: ", row["Дата последнего посещения"], isinstance(row["Дата последнего посещения"], datetime), type(row["Дата последнего посещения"]))
-         parse = parse_row(row)
-         if parse:
-           data[inn].append(parse)
+      if check_rq(inn):
+        rows = df[df["ИНН"] == inn]
+        data[inn] = []
+        for index, row in rows.iterrows():
+          #print("last visit: ", row["Дата последнего посещения"], isinstance(row["Дата последнего посещения"], datetime), type(row["Дата последнего посещения"]))
+          parse = parse_row(row)
+          if parse:
+            data[inn].append(parse)
     #print("data: ", list(data.keys()))  
     
     for key in data.keys():
@@ -68,7 +66,17 @@ async def dframe_handler(client, df):
       data[key] = [item for item in data[key] if item]
       #print(key
     return data
-    
+
+def check_rq(rq):
+    try:
+      rq = str(int(rq))
+    except:
+      return False
+    if len(rq) != 10:
+      return True
+    else:
+      return True
+      
 async def file_handler(client, fileid):
     try:
       url = await get_link(client, fileid)
@@ -129,7 +137,23 @@ def get_time(time):
   updated = ' '.join(updated[1:5])
   updated = datetime.strptime(updated, "%d %b %Y %H:%M:%S")
   return updated
-  
+
+async def get_company(client, rq):
+  try:
+    rq = str(int(rq))
+  except:
+    return False
+  if len(rq) != 10:
+    return False
+  url = api + "crm.requisite.list"
+  body = {"select": ["ENTITY_ID", "RQ_INN"], "filter": {"ENTITY_TYPE_ID": 4, "RQ_INN": rq}}
+  response = await client.post(url, json=body)
+  response = response.json()
+  if len(response["result"]) > 0:
+    return response["result"][0]["ENTITY_ID"]
+  else:
+    return False
+    
 async def get_companies(client):
   url = api + "crm.requisite.list"
   body = {"select": ["ENTITY_ID", "RQ_INN"]}
