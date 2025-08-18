@@ -272,7 +272,7 @@ def get_plan(row):
     
 def format_headers(df):
   headers = list(df.keys())
-  headers = df.columns.tolist()p
+  headers = df.columns.tolist()
   formatted_headers = list(map(lambda header: header.strip().upper(), headers))
   df = df.rename(columns=dict(zip(headers, formatted_headers)))
   return df
