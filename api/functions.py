@@ -285,7 +285,7 @@ async def process_data(client, data):
   for key in keys:
     print("ИНН: ", key)
     dates = get_dates(all_dates, key)
-    print(data[key][reports])
+    print(data[key]["reports"])
     reports = list(filter(lambda item: isinstance(item["date"], datetime) and not pd.isna(item["date"]) and item["date"] > dates["last"], data[key]["reports"]))
     plans = list(filter(lambda item: isinstance(item["date"], datetime) and not pd.isna(item["date"]) and item["date"] > dates["next"], data[key]["plans"]))
     if reports or plans:
