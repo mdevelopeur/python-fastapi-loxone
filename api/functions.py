@@ -223,6 +223,8 @@ def get_dates(dates, inn):
   return dates[inn]
 
 def convert_date(date):
+  if pd.isna(date):
+    return False
   if isinstance(date, pd.Timestamp):
     return date.to_pydatetime()
   elif isinstance(date, datetime):
