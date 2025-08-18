@@ -61,6 +61,7 @@ async def dframe_handler(client, df):
           plan = get_plan(row)
           data[inn]["reports"].extend(report)
           data[inn]["plans"].extend(plan)
+        print(inn, data[inn])
     #print("data: ", list(data.keys()))  
     
     for key in data.keys():
