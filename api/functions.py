@@ -54,20 +54,20 @@ async def dframe_handler(client, df):
     for inn in list(set(df["ИНН"].tolist())):
       inn = check_rq(inn)
       if inn:
-        #print("ИНН в data: ", inn)
         rows = df[df["ИНН"] == inn]
-        data[inn] = []
+        data[inn] = {"reports": [], "plans": []}
         for index, row in rows.iterrows():
-          #print("last visit: ", row["Дата последнего посещения"], isinstance(row["Дата последнего посещения"], datetime), type(row["Дата последнего посещения"]))
-          parse = parse_row(row)
-          if parse:
-            data[inn].append(parse)
+          report = get_report(row)
+          plan = get_plan(row)
+          data[inn]["reports"].extend(report)
+          data[inn]["plans"].extend(plan")
     #print("data: ", list(data.keys()))  
     
     for key in data.keys():
       #print(data[key])
       data[key] = [item for item in data[key] if item]
       #print(key
+    
     return data
 
 def check_rq(rq):
@@ -223,88 +223,96 @@ def convert_date(date):
   elif isinstance(date, datetime):
     return date
   else:
-    return pd.NaT
+    return False
 
 def parse_row(row):
   dict = {}
   last_date = convert_date(row["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"])
-  next_date = convert_date(row["ДАТА СЛЕДУЮЩЕГО ПОСЕЩЕНИЯ"])
-  #if last_date and next_date:
-    #print(last_date, next_date)
-  dict["last_visit"] = last_date
+  next_date = convert_date(row["ДАТА СЛЕДУЮЩЕГО ПОСЕЩЕНИЯ"]) 
+  report = row["ОТЧЕТ ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]
+  plan = row["ПЛАН ДЛЯ СЛЕДУЮЩЕГО ПОСЕЩЕНИЯ"]
   dict["next_visit"] = next_date
-  #dict["name"] = row["ЛПУ"]
-  #dict["addre
-  #else:
-  #return False
-  if not pd.isna(last_date):
-    last_date = last_date.strftime("%d.%m.%y")
-    #next_date = next_date.strftime("%d.%m.%y")
-    report = row["ОТЧЕТ ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]
-    if not isinstance(report, str):
-      report = ""
-    dict["report"] = f"{last_date}:\n{report}"
-  if not pd.isna(next_date):
-    plan = row["ПЛАН ДЛЯ СЛЕДУЮЩЕГО ПОСЕЩЕНИЯ"]
-    if not isinstance(plan, str):
-      plan = ""    
+  
+  if last_date and isinstance(report, str):
+    dict["report"]["last_visit"] = last_date
+    last_date = last_date.strftime("%d.%m.%y")    
+    dict[["report"] = f"{last_date}:\n{report}"
+    
+  if next_date and isinstance(plan, str):
     next_date = next_date.strftime("%d.%m.%y")
     dict["plan"] = f"{next_date}:\n{plan}"
+    
   return dict
 
+def get_report(row):
+  dict = {}
+  last_date = convert_date(row["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"])
+  report = row["ОТЧЕТ ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]
+  if last_date and isinstance(report, str):
+    dict["date"] = last_date
+    last_date = last_date.strftime("%d.%m.%y")    
+    dict["text"] = f"{last_date}:\n{report}"
+    return [dict]
+  else:
+    return []
+
+def get_plan(row):
+  dict = {}
+  next_date = convert_date(row["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"])
+  plan = row["ПЛАН ДЛЯ СЛЕДУЮЩЕГО ПОСЕЩЕНИЯ"]
+  if last_date and isinstance(report, str):
+    dict["date"] = next_date
+    date = next_date.strftime("%d.%m.%y")    
+    dict["text"] = f"{date}:\n{plan}"
+    return [dict]
+  else:
+    return []
+    
 def format_headers(df):
   headers = list(df.keys())
-  headers = df.columns.tolist()
+  headers = df.columns.tolist()p
   formatted_headers = list(map(lambda header: header.strip().upper(), headers))
   df = df.rename(columns=dict(zip(headers, formatted_headers)))
   return df
 
 async def process_data(client, data):
   r = redis.from_url(redis_url, decode_responses=True)
-  #comments = await get_comments(client)
   keys = list(data.keys())
   all_dates = await get_all_dates(r)
   print("Keys: ", keys)
   for key in keys:
     print("ИНН: ", key)
-    company = await get_company(client, key)
-    if company: 
-      try:  
-        #comment = comments.get(company)
-        dates = get_dates(all_dates, key)
-        print(dates)     
-        reports = list(filter(lambda item: isinstance(item["last_visit"], datetime) and not pd.isna(item["last_visit"]) and item["last_visit"] > dates["last"], data[key]))
-        for report in reports:
-          print(report["last_visit"], dates["last"], report["last_visit"] > dates["last"]) 
-        reports.sort(key=lambda item: item["last_visit"])
-        if len(reports) > 0:          
-          report_processed = await process_report(client, reports[0], company)
-          last = reports[0]["last_visit"]
-        else:
-          report_processed = False
-          last = dates["last"]
-        plans = list(filter(lambda item: isinstance(item["next_visit"], datetime) and not pd.isna(item["next_visit"]) and item["next_visit"] > dates["next"], data[key]))
-        plans.sort(key=lambda item: item["next_visit"])
-        if len(plans) > 0:          
-          plan_processed = await process_plan(client, plans[0], company)
-          next = reports[0]["next_visit"]
-        else:
-          plan_processed = False
-          next = dates["next"]
-        if report_processed or plan_processed:      
-          response = r.hset(key, mapping={"id": key, "last": int(last.timestamp()), "next": int(next.timestamp())})
-          print("Redis response: ", response)
+    dates = get_dates(all_dates, key)
+    reports = list(filter(lambda item: isinstance(item["date"], datetime) and not pd.isna(item["date"]) and item["date"] > dates["last"], data[key]["reports"]))
+    plans = list(filter(lambda item: isinstance(item["date"], datetime) and not pd.isna(item["date"]) and item["date"] > dates["next"], data[key]["plans"]))
+    if reports or plans:
+      company = await get_company(client, key)
+      if company: 
+        try: 
+          if reports:
+            print(dates)           
+            for report in reports:
+              print(report["date"], dates["last"], report["date"] > dates["last"]) 
+            reports.sort(key=lambda item: item["date"])          
+            report_processed = await process_report(client, reports[0], company)
+            dates["last"] = reports[0]["date"]
+          if plans:
+            plans.sort(key=lambda item: item["date"])          
+            plan_processed = await process_plan(client, plans[0], company)
+            dates["next"] = plans[0]["date"]
+      
+          if report_processed or plan_processed:      
+            response = r.hset(key, mapping={"id": key, "last": int(date["last"].timestamp()), "next": int(date["next"].timestamp())})
+            print("Redis response: ", response)
           return
-        print("reports length: ", len(reports))
-        #print(isinstance(reports[0]["last_visit"], datetime), pd.isna(reports[0]["last_visit"]))
-        #print(reports[0])      
-      except Exception as e:
-        print("Data processing exception: ", e)
-        return
+          #print("reports length: ", len(reports))      
+        except Exception as e:
+          print("Data processing exception: ", e)
+    return
 
 async def process_report(client, report, company):
     print(report)
-    date = report["last_visit"]
+    date = report["date"]
     '''
     if comment is None:
       comment = report["report"]
@@ -312,7 +320,7 @@ async def process_report(client, report, company):
       comment += f"\n{report["report"]}"
     '''
     url = api + "crm.timeline.comment.add"
-    body = {"fields":{"ENTITY_ID": company,"ENTITY_TYPE": "company","COMMENT": report["report"]}}
+    body = {"fields":{"ENTITY_ID": company,"ENTITY_TYPE": "company","COMMENT": report["text"]}}
     print(body)
     response = await client.post(url, json=body) 
     response = response.json()
@@ -325,8 +333,8 @@ async def process_report(client, report, company):
 async def process_plan(client, plan, company):
   print(plan)
   url = api + "crm.activity.todo.add"
-  deadline = plan["next_visit"].strftime("%Y-%m-%dT%H:%M:%S")
-  body = {"ownerTypeId": 4, "ownerId": int(company), "deadline": deadline, "title": "Проверка", "description": plan["plan"]}
+  deadline = plan["date"].strftime("%Y-%m-%dT%H:%M:%S")
+  body = {"ownerTypeId": 4, "ownerId": int(company), "deadline": deadline, "title": "Проверка", "description": plan["text"]}
   response = await client.post(url, json=body)
   response = response.json()
   print(response)
