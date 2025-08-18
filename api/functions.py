@@ -50,14 +50,14 @@ async def dframe_handler(client, df):
     for date in df["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]:
       ...
     data = {}
-    print(df)
+    #print(df)
     print("ИНН в df: ", list(set(df["ИНН"].tolist())))
     for inn in list(set(df["ИНН"].tolist())):
+      rows = df[df["ИНН"] == inn]
       inn = check_rq(inn)
-      if inn:
-        rows = df[df["ИНН"] == inn]
+      if inn:       
         data[inn] = {"reports": [], "plans": []}
-        print(rows)
+        #print(rows)
         for index, row in rows.iterrows():
           print(row)
           report = get_report(row)
