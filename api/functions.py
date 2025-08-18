@@ -56,7 +56,9 @@ async def dframe_handler(client, df):
       if inn:
         rows = df[df["ИНН"] == inn]
         data[inn] = {"reports": [], "plans": []}
+        print(rows)
         for index, row in rows.iterrows():
+          print(row)
           report = get_report(row)
           plan = get_plan(row)
           data[inn]["reports"].extend(report)
