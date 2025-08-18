@@ -60,7 +60,7 @@ async def dframe_handler(client, df):
           report = get_report(row)
           plan = get_plan(row)
           data[inn]["reports"].extend(report)
-          data[inn]["plans"].extend(plan")
+          data[inn]["plans"].extend(plan)
     #print("data: ", list(data.keys()))  
     
     for key in data.keys():
