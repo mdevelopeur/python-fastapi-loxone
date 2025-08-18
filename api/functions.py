@@ -269,7 +269,7 @@ def get_plan(row):
   dict = {}
   next_date = convert_date(row["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"])
   plan = row["ПЛАН ДЛЯ СЛЕДУЮЩЕГО ПОСЕЩЕНИЯ"]
-  if next_date and isinstance(report, str):
+  if next_date and isinstance(plan, str):
     dict["date"] = next_date
     date = next_date.strftime("%d.%m.%y")    
     dict["text"] = f"{date}:\n{plan}"
