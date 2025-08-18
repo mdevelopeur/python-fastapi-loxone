@@ -225,6 +225,7 @@ def convert_date(date):
   else:
     return False
 
+'''
 def parse_row(row):
   dict = {}
   last_date = convert_date(row["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"])
@@ -243,6 +244,7 @@ def parse_row(row):
     dict["plan"] = f"{next_date}:\n{plan}"
     
   return dict
+'''
 
 def get_report(row):
   dict = {}
