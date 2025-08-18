@@ -67,12 +67,12 @@ async def dframe_handler(client, df):
           data[inn]["plans"].extend(plan)
         #print(inn, data[inn])
     #print("data: ", list(data.keys()))  
-    
+    '''
     for key in data.keys():
       #print(data[key])
       data[key] = [item for item in data[key] if item]
       #print(key
-    
+    '''
     return data
 
 def check_rq(rq):
