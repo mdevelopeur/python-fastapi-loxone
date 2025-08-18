@@ -50,6 +50,7 @@ async def dframe_handler(client, df):
     for date in df["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]:
       ...
     data = {}
+    print(df)
     print("ИНН в df: ", list(set(df["ИНН"].tolist())))
     for inn in list(set(df["ИНН"].tolist())):
       inn = check_rq(inn)
