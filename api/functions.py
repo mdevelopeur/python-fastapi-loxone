@@ -320,7 +320,7 @@ async def process_data(client, data):
           #print("reports length: ", len(reports))      
         except Exception as e:
           print("Data processing exception: ", e)
-    return
+    #return
 
 async def process_report(client, report, company):
     print(report)
