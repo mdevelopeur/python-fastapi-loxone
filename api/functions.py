@@ -251,10 +251,12 @@ def get_report(row):
   dict = {}
   last_date = convert_date(row["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"])
   report = row["ОТЧЕТ ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]
+  print("report: ", last_date, report)
   if last_date and isinstance(report, str):
     dict["date"] = last_date
     last_date = last_date.strftime("%d.%m.%y")    
     dict["text"] = f"{last_date}:\n{report}"
+    print("report output: ", dict)
     return [dict]
   else:
     return []
