@@ -15,6 +15,7 @@ import pandas as pd
 import xlrd
 import openpyxl
 import io
+import unicodedata
 
 load_dotenv(dotenv_path=".env")
 api = os.getenv("api")
@@ -59,12 +60,12 @@ async def dframe_handler(client, df):
         data[inn] = {"reports": [], "plans": []}
         #print(rows)
         for index, row in rows.iterrows():
-          print(row)
+          #print(row)
           report = get_report(row)
           plan = get_plan(row)
           data[inn]["reports"].extend(report)
           data[inn]["plans"].extend(plan)
-        print(inn, data[inn])
+        #print(inn, data[inn])
     #print("data: ", list(data.keys()))  
     
     for key in data.keys():
@@ -76,7 +77,7 @@ async def dframe_handler(client, df):
 
 def check_rq(rq):
     try:
-      rq = str(int(rq))
+      rq = unicodedata.normalize(str(int(rq)))
     except Exception as e:
       print(rq, e)
       return False
@@ -254,12 +255,12 @@ def get_report(row):
   dict = {}
   last_date = convert_date(row["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"])
   report = row["ОТЧЕТ ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]
-  print("report: ", last_date, report)
+  #print("report: ", last_date, report)
   if last_date and isinstance(report, str):
     dict["date"] = last_date
     last_date = last_date.strftime("%d.%m.%y")    
     dict["text"] = f"{last_date}:\n{report}"
-    print("report output: ", dict)
+    #print("report output: ", dict)
     return [dict]
   else:
     return []
@@ -268,7 +269,7 @@ def get_plan(row):
   dict = {}
   next_date = convert_date(row["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"])
   plan = row["ПЛАН ДЛЯ СЛЕДУЮЩЕГО ПОСЕЩЕНИЯ"]
-  if last_date and isinstance(report, str):
+  if next_date and isinstance(report, str):
     dict["date"] = next_date
     date = next_date.strftime("%d.%m.%y")    
     dict["text"] = f"{date}:\n{plan}"
