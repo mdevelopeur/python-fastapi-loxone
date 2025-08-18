@@ -77,7 +77,7 @@ async def dframe_handler(client, df):
 
 def check_rq(rq):
     try:
-      rq = unicodedata.normalize(str(int(rq)))
+      rq = str(int(rq))
     except Exception as e:
       print(rq, e)
       return False
