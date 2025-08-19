@@ -29,15 +29,16 @@ headers = {"Authorization": f"Bearer {token}"}
 
 async def main():  
   async with httpx.AsyncClient() as client:
-    last_date = datetime(2025, 7, 1)
+    #last_date = datetime(2025, 7, 1)
     files = []
     data_frames = []
     #df = pd.DataFrame()
     folders = await list_folders(client)
     for folder in folders:
-      inner_files = await get_files(client, folder["id"], last_date)
+      inner_files = await get_files(client, folder["id"])
       files.extend(inner_files)
     for file in files:
+      print(file["name"])
       inner_df = await file_handler(client, file["fileid"])
       data_frames.append(inner_df)
     df = pd.concat(data_frames)
@@ -133,12 +134,12 @@ def get_folder_data(folder):
   #print(updated)
   return {"id": folder["folderid"], "name": folder["name"], "updated": updated}
   
-async def get_files(client, folder_id, last_date):
+async def get_files(client, folder_id):
   url = eapi + "listfolder?folderid=" + str(folder_id)
   response = await client.get(url, headers=headers)
   response = response.json()
   files = response["metadata"]["contents"]
-  files = list(filter(lambda file: get_time(file["modified"]) > last_date, files))
+  #files = list(filter(lambda file: get_time(file["modified"]) > last_date, files))
   return files
     
 def get_time(time):
