@@ -306,8 +306,8 @@ async def deduplicate():
         print(duplicates)
         if len(duplicates) > 1:
           await delete_comment(client, comment["ID"])
-          
-          return 
+          break
+          #return 
         
 
 async def get_comments(client, id):
