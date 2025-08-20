@@ -258,7 +258,7 @@ async def process_data(client, data):
               dates["next"] = plans[0]["date"]
       
             if report_processed or plan_processed:      
-              response = r.hset(key, mapping={"id": company, "last": int(dates["last"].timestamp()), "next": int(dates["next"].timestamp())})
+              response = r.hset(company, mapping={"id": company, "last": int(dates["last"].timestamp()), "next": int(dates["next"].timestamp())})
               print("Redis response: ", response)
           except Exception as e:
             print("Data processing exception: ", e)
