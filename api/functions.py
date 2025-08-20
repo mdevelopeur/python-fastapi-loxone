@@ -245,13 +245,14 @@ async def process_data(client, data):
           try: 
             plan_processed = report_processed = False
             if reports:
-              print(dates)           
-              for report in reports:
-                print(report["date"], dates["last"], report["date"] > dates["last"]) 
+              #print(dates)           
+              #for report in reports:
+              #print(report["date"], dates["last"], report["date"] > dates["last"]) 
               reports.sort(key=lambda item: item["date"])          
               report_processed = await process_report(client, reports[0], company)
               dates["last"] = reports[0]["date"]
             if plans:
+              
               plans.sort(key=lambda item: item["date"])          
               plan_processed = await process_plan(client, plans[0], company)
               dates["next"] = plans[0]["date"]
@@ -263,21 +264,21 @@ async def process_data(client, data):
             print("Data processing exception: ", e)
 
 async def process_report(client, report, company):
-    print(report)
+    #print(report)
     date = report["date"]
     url = api + "crm.timeline.comment.add"
     body = {"fields":{"ENTITY_ID": company,"ENTITY_TYPE": "company","COMMENT": report["text"]}}
-    print(body)
+    #print(body)
     response = await client.post(url, json=body) 
     response = response.json()
     print(response)
-    if response.get("result") == True:
+    if response.get("result") is not None:
       return True 
     else:
       return False
       
 async def process_plan(client, plan, company):
-  print(plan)
+  #print(plan)
   url = api + "crm.activity.todo.add"
   deadline = plan["date"].strftime("%Y-%m-%dT%H:%M:%S")
   body = {"ownerTypeId": 4, "ownerId": int(company), "deadline": deadline, "title": "Проверка", "description": plan["text"]}
