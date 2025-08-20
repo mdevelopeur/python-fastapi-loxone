@@ -299,7 +299,10 @@ async def deduplicate():
   r = redis.from_url(redis_url, decode_responses=True)
   keys = r.keys()
   async with httpx.AsyncClient() as client:
-    for key in keys:
+    for index, key in keys:
+      print(index)
+      if index > 10:
+        break
       comments = await get_comments(client, key)
       for comment in comments:
         duplicates = list(filter(lambda item: item["ENTITY_ID"] == comment["ENTITY_ID"] and item["COMMENT"] == comment["COMMENT"], comments))
