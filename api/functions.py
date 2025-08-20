@@ -244,6 +244,7 @@ async def process_data(client, data):
         for company in companies:
           dates = get_dates(all_dates, company)
           try: 
+            plan_processed = report_processed = False
             if reports:
               print(dates)           
               for report in reports:
