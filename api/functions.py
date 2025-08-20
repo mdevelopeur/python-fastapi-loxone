@@ -299,7 +299,7 @@ async def deduplicate():
   r = redis.from_url(redis_url, decode_responses=True)
   keys = r.keys()
   async with httpx.AsyncClient() as client:
-    for index, key in keys:
+    for index, key in enumerate(keys):
       print(index)
       if index > 10:
         break
