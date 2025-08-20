@@ -321,4 +321,5 @@ async def delete_comment(client, id):
     body = {"ID": id}
     response = await client.post(url, json=body)
     response = response.json()
+    print(response)
     return response["result"]
