@@ -298,11 +298,13 @@ async def clear_redis():
 async def deduplicate():
   async with httpx.AsyncClient() as client:
     comments = await get_comments(client)
+    deleted = set() 
     for comment in comments:
       duplicates = list(filter(lambda item: item["ENTITY_ID"] == comment["ENTITY_ID"] and item["COMMENT"] == comment["COMMENT"], comments))
-      if len(duplicates) > 1:
+      if len(duplicates) > 1 and duplicates[0] not in deleted:
         await delete_comment(client, duplicates[0]["ID"])
-        comments.remove(duplicates[1])
+        deleted.append(duplicates[0])
+        
 
 async def get_comments(client):
     url = api + "crm.timeline.comment.list"
