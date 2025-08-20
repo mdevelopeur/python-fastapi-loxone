@@ -303,7 +303,7 @@ async def deduplicate():
       comments = await get_comments(client, key)
       for comment in comments:
         duplicates = list(filter(lambda item: item["ENTITY_ID"] == comment["ENTITY_ID"] and item["COMMENT"] == comment["COMMENT"], comments))
-        if len(duplicates) > 1 and duplicates[0] not in deleted:
+        if len(duplicates) > 1:
           await delete_comment(client, comment["ID"])
           print(duplicates)
           return 
