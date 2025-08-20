@@ -236,13 +236,14 @@ async def process_data(client, data):
     print("ИНН: ", key)
     
     print(data[key])
-    reports = list(filter(lambda item: isinstance(item["date"], datetime) and not pd.isna(item["date"]) and item["date"] > dates["last"], data[key]["reports"]))
-    plans = list(filter(lambda item: isinstance(item["date"], datetime) and not pd.isna(item["date"]) and item["date"] > dates["next"], data[key]["plans"]))
+    
     if reports or plans:
       companies = await get_companies(client, key)
       if companies: 
         for company in companies:
           dates = get_dates(all_dates, company)
+          reports = list(filter(lambda item: isinstance(item["date"], datetime) and not pd.isna(item["date"]) and item["date"] > dates["last"], data[key]["reports"]))
+          plans = list(filter(lambda item: isinstance(item["date"], datetime) and not pd.isna(item["date"]) and item["date"] > dates["next"], data[key]["plans"]))
           try: 
             plan_processed = report_processed = False
             if reports:
