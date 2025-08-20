@@ -237,6 +237,7 @@ async def process_data(client, data, start_time):
   for key in keys:
     if time.time() - start_time > 50:
       print("time: ", time.time() - start_time)
+      break
     print("ИНН: ", key)    
     print(data[key])
     companies = await get_companies(client, key)
