@@ -296,14 +296,17 @@ async def clear_redis():
   r.flushdb()
 
 async def deduplicate():
+  r = redis.from_url(redis_url, decode_responses=True)
+  keys = r.keys()
   async with httpx.AsyncClient() as client:
-    comments = await get_comments(client)
-    deleted = set() 
-    for comment in comments:
-      duplicates = list(filter(lambda item: item["ENTITY_ID"] == comment["ENTITY_ID"] and item["COMMENT"] == comment["COMMENT"], comments))
-      if len(duplicates) > 1 and duplicates[0] not in deleted:
-        await delete_comment(client, duplicates[0]["ID"])
-        deleted.add(duplicates[0])
+    for key in keys:
+      comments = await get_comments(client, key)
+      for comment in comments:
+        duplicates = list(filter(lambda item: item["ENTITY_ID"] == comment["ENTITY_ID"] and item["COMMENT"] == comment["COMMENT"], comments))
+        if len(duplicates) > 1 and duplicates[0] not in deleted:
+          await delete_comment(client, comment["ID"])
+          print(duplicates)
+          return 
         
 
 async def get_comments(client, id):
