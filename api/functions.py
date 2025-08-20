@@ -306,7 +306,7 @@ async def deduplicate():
   async with httpx.AsyncClient() as client:
     count = 0
     for index, key in enumerate(keys):
-      print(count)
+      print("index: ", index)
       if count > 20: 
         return 
       comments = await get_comments(client, key)
