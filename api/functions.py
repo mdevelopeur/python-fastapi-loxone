@@ -306,9 +306,9 @@ async def deduplicate():
         deleted.add(duplicates[0])
         
 
-async def get_comments(client):
+async def get_comments(client, id):
     url = api + "crm.timeline.comment.list"
-    body = {"filter":{"ENTITY_TYPE": "company"}, "select": ["ID", "COMMENT", "ENTITY_ID"]}
+    body = {"filter":{"ENTITY_TYPE": "company", "ENTITY_ID": id}, "select": ["ID", "COMMENT", "ENTITY_ID"]}
     response = await client.post(url, json=body)
     response = response.json()
     return response["result"]
