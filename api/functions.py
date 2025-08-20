@@ -287,7 +287,7 @@ async def process_plan(client, plan, company):
   #print(plan)
   url = api + "crm.activity.todo.add"
   deadline = plan["date"].strftime("%Y-%m-%dT%H:%M:%S")
-  body = {"ownerTypeId": 4, "ownerId": int(company), "deadline": deadline, "title": "Проверка", "description": plan["text"]}
+  body = {"ownerTypeId": 4, "ownerId": int(company), "deadline": deadline, "title": "Добавлено автоматически", "description": plan["text"]}
   response = await client.post(url, json=body)
   response = response.json()
   print(response)
@@ -317,10 +317,8 @@ async def deduplicate():
         if len(duplicates) > 1:
           await delete_comment(client, comment["ID"])
           count += 1
-          break
-          #return 
+          break 
         
-
 async def get_comments(client, id):
     url = api + "crm.timeline.comment.list"
     body = {"filter":{"ENTITY_TYPE": "company", "ENTITY_ID": id}, "select": ["ID", "COMMENT", "ENTITY_ID"]}
@@ -329,6 +327,21 @@ async def get_comments(client, id):
     return response["result"]
   
 async def delete_comment(client, id):
+    url = api + "crm.timeline.comment.delete"
+    body = {"id": id}
+    response = await client.post(url, json=body)
+    response = response.json()
+    print(response)
+    return response["result"]
+
+async def get_activities(client, id):
+    url = api + "crm.timeline.comment.list"
+    body = {"filter":{"ENTITY_TYPE": "company", "ENTITY_ID": id}, "select": ["ID", "COMMENT", "ENTITY_ID"]}
+    response = await client.post(url, json=body)
+    response = response.json()
+    return response["result"]
+
+async def delete_activity(client, id):
     url = api + "crm.timeline.comment.delete"
     body = {"id": id}
     response = await client.post(url, json=body)
