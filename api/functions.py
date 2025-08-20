@@ -128,17 +128,16 @@ def get_time(time):
   updated = datetime.strptime(updated, "%d %b %Y %H:%M:%S")
   return updated
 
-async def get_company(client, rq):
+async def get_companies(client, rq):
   url = api + "crm.requisite.list"
   body = {"select": ["ENTITY_ID", "RQ_INN"], "filter": {"ENTITY_TYPE_ID": 4, "RQ_INN": rq}}
   response = await client.post(url, json=body)
   response = response.json()
   print(response["result"])
-  if len(response["result"]) > 0:
-    return response["result"][0]["ENTITY_ID"]
-  else:
-    return False
-    
+  companies = list(map(lambda item: item["ENTITY_ID"], response["result"]))
+  return companies
+  
+'''   
 async def get_companies(client):
   url = api + "crm.requisite.list"
   body = {"select": ["ENTITY_ID", "RQ_INN"]}
@@ -152,7 +151,7 @@ async def get_companies(client):
       continue 
   print(companies)
   return companies 
-
+'''
 async def set_comments(client, companies):
   url = api + "batch"
   cmd = {}
@@ -235,31 +234,33 @@ async def process_data(client, data):
   print("Keys: ", keys)
   for key in keys:
     print("ИНН: ", key)
-    dates = get_dates(all_dates, key)
+    
     print(data[key])
     reports = list(filter(lambda item: isinstance(item["date"], datetime) and not pd.isna(item["date"]) and item["date"] > dates["last"], data[key]["reports"]))
     plans = list(filter(lambda item: isinstance(item["date"], datetime) and not pd.isna(item["date"]) and item["date"] > dates["next"], data[key]["plans"]))
     if reports or plans:
-      company = await get_company(client, key)
-      if company: 
-        try: 
-          if reports:
-            print(dates)           
-            for report in reports:
-              print(report["date"], dates["last"], report["date"] > dates["last"]) 
-            reports.sort(key=lambda item: item["date"])          
-            report_processed = await process_report(client, reports[0], company)
-            dates["last"] = reports[0]["date"]
-          if plans:
-            plans.sort(key=lambda item: item["date"])          
-            plan_processed = await process_plan(client, plans[0], company)
-            dates["next"] = plans[0]["date"]
+      companies = await get_companies(client, key)
+      if companies: 
+        for company in companies:
+          dates = get_dates(all_dates, company)
+          try: 
+            if reports:
+              print(dates)           
+              for report in reports:
+                print(report["date"], dates["last"], report["date"] > dates["last"]) 
+              reports.sort(key=lambda item: item["date"])          
+              report_processed = await process_report(client, reports[0], company)
+              dates["last"] = reports[0]["date"]
+            if plans:
+              plans.sort(key=lambda item: item["date"])          
+              plan_processed = await process_plan(client, plans[0], company)
+              dates["next"] = plans[0]["date"]
       
-          if report_processed or plan_processed:      
-            response = r.hset(key, mapping={"id": key, "last": int(dates["last"].timestamp()), "next": int(dates["next"].timestamp())})
-            print("Redis response: ", response)
-        except Exception as e:
-          print("Data processing exception: ", e)
+            if report_processed or plan_processed:      
+              response = r.hset(key, mapping={"id": company, "last": int(dates["last"].timestamp()), "next": int(dates["next"].timestamp())})
+              print("Redis response: ", response)
+          except Exception as e:
+            print("Data processing exception: ", e)
 
 async def process_report(client, report, company):
     print(report)
