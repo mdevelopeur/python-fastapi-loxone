@@ -235,11 +235,12 @@ async def process_data(client, data, start_time):
   all_dates = await get_all_dates(r)
   print("Keys: ", keys)
   for key in keys:
+    print("time: ", time.time() - start_time)
     if time.time() - start_time > 50:
-      print("time: ", time.time() - start_time)
+      #print("time: ", time.time() - start_time)
       break
     print("ИНН: ", key)    
-    print(data[key])
+    #print(data[key])
     companies = await get_companies(client, key)
     if companies: 
       for company in companies:
