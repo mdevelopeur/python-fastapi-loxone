@@ -233,17 +233,15 @@ async def process_data(client, data):
   all_dates = await get_all_dates(r)
   print("Keys: ", keys)
   for key in keys:
-    print("ИНН: ", key)
-    
+    print("ИНН: ", key)    
     print(data[key])
-    
-    if reports or plans:
-      companies = await get_companies(client, key)
-      if companies: 
-        for company in companies:
-          dates = get_dates(all_dates, company)
-          reports = list(filter(lambda item: isinstance(item["date"], datetime) and not pd.isna(item["date"]) and item["date"] > dates["last"], data[key]["reports"]))
-          plans = list(filter(lambda item: isinstance(item["date"], datetime) and not pd.isna(item["date"]) and item["date"] > dates["next"], data[key]["plans"]))
+    companies = await get_companies(client, key)
+    if companies: 
+      for company in companies:
+        dates = get_dates(all_dates, company)
+        reports = list(filter(lambda item: isinstance(item["date"], datetime) and not pd.isna(item["date"]) and item["date"] > dates["last"], data[key]["reports"]))
+        plans = list(filter(lambda item: isinstance(item["date"], datetime) and not pd.isna(item["date"]) and item["date"] > dates["next"], data[key]["plans"]))
+        if reports or plans:
           try: 
             plan_processed = report_processed = False
             if reports:
