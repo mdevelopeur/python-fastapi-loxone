@@ -66,14 +66,7 @@ async def dframe_handler(client, df):
           plan = get_plan(row)
           data[inn]["reports"].extend(report)
           data[inn]["plans"].extend(plan)
-        #print(inn, data[inn])
-    #print("data: ", list(data.keys()))  
-    '''
-    for key in data.keys():
-      #print(data[key])
-      data[key] = [item for item in data[key] if item]
-      #print(key
-    '''
+
     return data
 
 def check_rq(rq):
@@ -131,7 +124,6 @@ async def list_folders(client):
   
 def get_folder_data(folder):
   updated = get_time(folder["modified"])
-  #print(updated)
   return {"id": folder["folderid"], "name": folder["name"], "updated": updated}
   
 async def get_files(client, folder_id):
@@ -139,7 +131,6 @@ async def get_files(client, folder_id):
   response = await client.get(url, headers=headers)
   response = response.json()
   files = response["metadata"]["contents"]
-  #files = list(filter(lambda file: get_time(file["modified"]) > last_date, files))
   return files
     
 def get_time(time):
@@ -166,14 +157,10 @@ async def get_companies(client):
   response = response.json()
   companies = {}
   for item in response["result"]:
-    #print(item)
     try:
-      #inn = int(item["RQ_INN"])
       companies[int(item["RQ_INN"])] = item["ENTITY_ID"]
     except Exception as e:
-      #print(e)
       continue 
-  #companies = list(map(lambda item: {item["RQ_INN"]: item["ENTITY_ID"]}, response["result"]))
   print(companies)
   return companies 
 
@@ -181,7 +168,6 @@ async def set_comments(client, companies):
   url = api + "batch"
   cmd = {}
   for company in companies:
-    #comments = company["COMMENTS"]
     request = f"crm.company.update?id={company['ID']}&fields[COMMENTS]={company['COMMENTS']}"
     cmd[company['ID']] = request 
   body = { "cmd": cmd }
@@ -203,7 +189,6 @@ def check_date(date):
   print(date, type(date))
 
 async def get_all_dates(r):
-  #r = redis.from_url(redis_url, decode_responses=True)
   pipeline = r.pipeline()
   keys = r.keys()
   for key in keys:
@@ -233,37 +218,14 @@ def convert_date(date):
   else:
     return False
 
-'''
-def parse_row(row):
-  dict = {}
-  last_date = convert_date(row["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"])
-  next_date = convert_date(row["ДАТА СЛЕДУЮЩЕГО ПОСЕЩЕНИЯ"]) 
-  report = row["ОТЧЕТ ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]
-  plan = row["ПЛАН ДЛЯ СЛЕДУЮЩЕГО ПОСЕЩЕНИЯ"]
-  dict["next_visit"] = next_date
-  
-  if last_date and isinstance(report, str):
-    dict["report"]["last_visit"] = last_date
-    last_date = last_date.strftime("%d.%m.%y")    
-    dict[["report"] = f"{last_date}:\n{report}"
-    
-  if next_date and isinstance(plan, str):
-    next_date = next_date.strftime("%d.%m.%y")
-    dict["plan"] = f"{next_date}:\n{plan}"
-    
-  return dict
-'''
-
 def get_report(row):
   dict = {}
   last_date = convert_date(row["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"])
   report = row["ОТЧЕТ ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]
-  #print("report: ", last_date, report)
   if last_date and isinstance(report, str):
     dict["date"] = last_date
     last_date = last_date.strftime("%d.%m.%y")    
     dict["text"] = f"{last_date}:\n{report}"
-    #print("report output: ", dict)
     return [dict]
   else:
     return []
@@ -317,22 +279,12 @@ async def process_data(client, data):
           if report_processed or plan_processed:      
             response = r.hset(key, mapping={"id": key, "last": int(dates["last"].timestamp()), "next": int(dates["next"].timestamp())})
             print("Redis response: ", response)
-          #return
-          #print("reports length: ", len(reports))      
         except Exception as e:
           print("Data processing exception: ", e)
-          #return 
-    #return
 
 async def process_report(client, report, company):
     print(report)
     date = report["date"]
-    '''
-    if comment is None:
-      comment = report["report"]
-    else:
-      comment += f"\n{report["report"]}"
-    '''
     url = api + "crm.timeline.comment.add"
     body = {"fields":{"ENTITY_ID": company,"ENTITY_TYPE": "company","COMMENT": report["text"]}}
     print(body)
@@ -357,3 +309,10 @@ async def process_plan(client, plan, company):
       return True 
   
   return False  
+
+async def clear_redis():
+  r = redis.from_url(redis_url, decode_responses=True)
+  r.flushdb()
+
+async def deduplicate():
+  
