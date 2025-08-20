@@ -319,7 +319,7 @@ async def get_comments(client, id):
   
 async def delete_comment(client, id):
     url = api + "crm.timeline.comment.delete"
-    body = {"ID": id}
+    body = {"id": id}
     response = await client.post(url, json=body)
     response = response.json()
     print(response)
