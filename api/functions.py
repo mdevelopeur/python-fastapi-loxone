@@ -306,7 +306,7 @@ async def deduplicate():
   keys = r.keys()
   async with httpx.AsyncClient() as client:
     count = 0
-    for index, key in enumerate(keys):
+    for index, key in enumerate(keys[70:]):
       print("index: ", index)
       if count > 20: 
         return 
