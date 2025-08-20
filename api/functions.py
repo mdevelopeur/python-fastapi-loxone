@@ -5,7 +5,6 @@ import re
 import math
 import numbers
 import asyncio
-#import asyncpg
 import time
 import os
 import redis
@@ -20,7 +19,6 @@ import unicodedata
 load_dotenv(dotenv_path=".env")
 api = os.getenv("api")
 connection_string = os.getenv("postgresql")
-#slist = os.getenv("list").split(',')
 load_dotenv(dotenv_path=".env.local")
 redis_url = os.getenv("REDIS_URL")
 eapi = "https://eapi.pcloud.com/"
@@ -29,10 +27,8 @@ headers = {"Authorization": f"Bearer {token}"}
 
 async def main():  
   async with httpx.AsyncClient() as client:
-    #last_date = datetime(2025, 7, 1)
     files = []
     data_frames = []
-    #df = pd.DataFrame()
     folders = await list_folders(client)
     for folder in folders:
       inner_files = await get_files(client, folder["id"])
@@ -52,16 +48,13 @@ async def dframe_handler(client, df):
     for date in df["ДАТА ПОСЛЕДНЕГО ПОСЕЩЕНИЯ"]:
       ...
     data = {}
-    #print(df)
     print("ИНН в df: ", list(set(df["ИНН"].tolist())))
     for inn in list(set(df["ИНН"].tolist())):
       rows = df[df["ИНН"] == inn]
       inn = check_rq(inn)
       if inn:       
         data[inn] = {"reports": [], "plans": []}
-        #print(rows)
         for index, row in rows.iterrows():
-          #print(row)
           report = get_report(row)
           plan = get_plan(row)
           data[inn]["reports"].extend(report)
@@ -86,26 +79,22 @@ async def file_handler(client, fileid):
     except Exception as e:
       print(e)
       df = pd.DataFrame()
-      #format_headers(df)
       return df
     response = await client.get(url)
     file = io.BytesIO(response.content)
     try:
       df = pd.read_excel(file, engine='openpyxl')
-      #print(df.head())
       df = format_headers(df)
       return df
     except Exception as e:      
       print(f"Error reading Excel file: {e}")
       try:
         df = pd.read_excel(file, engine='xlrd')
-        #print(df.head())
         df = format_headers(df)
         return df
       except Exception as e:      
         print(f"Error reading Excel file: {e}")
         df = pd.DataFrame()
-        #format_headers(df)
         return df
         
 async def get_link(client, fileid):
@@ -174,16 +163,6 @@ async def set_comments(client, companies):
   response = await client.post(url, json=body)
   response = response.json()
   return response["result"]["result"]
-
-async def get_comments(client):
-  url = api + "crm.company.list"
-  body = {"select": ["ID", "COMMENTS"]}
-  response = await client.post(url, json=body)
-  response = response.json()
-  comments = {}
-  for item in response["result"]:
-    comments[item["ID"]] = item["COMMENTS"]
-  return comments 
   
 def check_date(date):
   print(date, type(date))
@@ -315,4 +294,24 @@ async def clear_redis():
   r.flushdb()
 
 async def deduplicate():
+  async with httpx.AsyncClient() as client:
+    comments = await get_comments(client)
+    for comment in comments:
+      duplicates = list(filter(lambda item: item["ENTITY_ID"] == comment["ENTITY_ID"] and item["COMMENT"] == comment["COMMENT"], comments))
+      if len(duplicates) > 1:
+        await delete_comment(client, duplicates[0]["ID"])
+        comments.remove(duplicates[1])
+
+async def get_comments(client):
+    url = api + "crm.timeline.comment.list"
+    body = {"filter":{"ENTITY_TYPE": "company"}, "select": ["ID", "COMMENT", "ENTITY_ID"]}
+    response = await client.post(url, json=body)
+    response = response.json()
+    return response["result"]
   
+async def delete_comment(client, id):
+    url = api + "crm.timeline.comment.delete"
+    body = {"ID": id}
+    response = await client.post(url, json=body)
+    response = response.json()
+    return response["result"]
