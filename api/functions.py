@@ -15,6 +15,7 @@ import xlrd
 import openpyxl
 import io
 import unicodedata
+import time
 
 load_dotenv(dotenv_path=".env")
 api = os.getenv("api")
@@ -27,6 +28,7 @@ headers = {"Authorization": f"Bearer {token}"}
 
 async def main():  
   async with httpx.AsyncClient() as client:
+    start_time = time.time()
     files = []
     data_frames = []
     folders = await list_folders(client)
@@ -39,7 +41,7 @@ async def main():
       data_frames.append(inner_df)
     df = pd.concat(data_frames)
     data = await dframe_handler(client, df)
-    await process_data(client, data)
+    await process_data(client, data, start_time)
     
 async def dframe_handler(client, df):
     check_date = datetime(2025, 7, 1)
@@ -227,12 +229,14 @@ def format_headers(df):
   df = df.rename(columns=dict(zip(headers, formatted_headers)))
   return df
 
-async def process_data(client, data):
+async def process_data(client, data, start_time):
   r = redis.from_url(redis_url, decode_responses=True)
   keys = list(data.keys())
   all_dates = await get_all_dates(r)
   print("Keys: ", keys)
   for key in keys:
+    if time.time() - start_time > 50:
+      print("time: ", time.time() - start_time)
     print("ИНН: ", key)    
     print(data[key])
     companies = await get_companies(client, key)
