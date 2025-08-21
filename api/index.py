@@ -6,7 +6,7 @@ from urllib.parse import unquote, urlparse
 app = FastAPI()
 
 
-@app.get('/api/update_')
+@app.get('/api/update')
 async def update(request: Request):
     try:
         await main()
@@ -16,7 +16,8 @@ async def update(request: Request):
 @app.get('/api/clear_redis')
 async def update(request: Request):
     try:
-        await clear_redis()
+        ...
+        #await clear_redis()
     except Exception as e:
         print(e)
 
