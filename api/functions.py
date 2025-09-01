@@ -18,10 +18,11 @@ import unicodedata
 import time
 
 load_dotenv(dotenv_path=".env")
-api = os.getenv("api")
+
 connection_string = os.getenv("postgresql")
 load_dotenv(dotenv_path=".env.local")
 redis_url = os.getenv("REDIS_URL")
+api = os.getenv("api")
 eapi = "https://eapi.pcloud.com/"
 token = "AT2fZ89VHkDT7OaQZMlMlVkZdslpGwQPJNbTKpnbvQtbO8yBYcny"
 headers = {"Authorization": f"Bearer {token}"}
