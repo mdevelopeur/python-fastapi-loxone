@@ -177,7 +177,8 @@ async def get_all_dates(r):
   data = pipeline.execute()
   dates = {}
   for item in data:
-    dates[item["id"]] = item
+    if "id" in item:
+      dates[item["id"]] = item
   print("Dates: ", dates)
   return dates
 
