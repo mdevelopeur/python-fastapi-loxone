@@ -4,22 +4,12 @@ import httpx
 import re
 import math
 import numbers
-import asyncio
 import time
 import os
 import redis
 import random 
 from dotenv import load_dotenv
-import pandas as pd
-import xlrd
-import openpyxl
-import io
-import unicodedata
-import time
 
-load_dotenv(dotenv_path=".env")
-
-connection_string = os.getenv("postgresql")
 load_dotenv(dotenv_path=".env.local")
 redis_url = os.getenv("REDIS_URL")
 api = os.getenv("api")
