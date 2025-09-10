@@ -27,5 +27,15 @@ async def get_products(client, deal):
   response = await client.post(url, json=body)
   response = response.json()
   return response["result"]
-  
+
+async def get_remaining_amounts(client, products):
+  url = api + "batch"
+  cmd = {}
+  for product in products:
+    [product["id"]] = f"catalog.storeproduct.list?filter[productid]={product["id"]}&order[]=amount"
+  body = {"cmd": cmd}
+  response = await client.post(url, json=body)
+  response = response.json()
+  responses = response["result"]["result"]
+  return responses
   
