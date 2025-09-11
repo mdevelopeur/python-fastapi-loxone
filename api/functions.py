@@ -50,8 +50,16 @@ async def create_documents(client, count):
   responses = response["result"]["result"]
   return responses
 
+async def create_document(client):
+  url = api + "catalog.document.add"
+  body = {"DOC_TYPE": "S", "RESPONSIBLE_ID": 1, "CURRENCY": "RUB", "DATE_DOCUMENT": date, "COMMENTARY":""}
+  response = await client.post(url, json=body)
+  response = response.json()
+  
+  return response["result"]["id"]
+
 async def add_products(client, document, products):
-  url = api + "batch"
+  urjl = api + "batch"
   cmd = {}
   for product in products:
     cmd[product["id"]] = f"catalog.document.element.add?fields"
