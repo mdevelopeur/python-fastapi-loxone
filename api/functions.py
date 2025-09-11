@@ -92,7 +92,15 @@ def get_fields_string(fields):
     strings.append(f"fields[{field}]={fields[field]}")
   return "&".join(strings)
     
-def filter_remaining(data):
+def filter_remainings(data):
   for key in data.keys():
-    data[key] = list(filter(lambda i: i["amount"] is not None, item["storeFront"]))
+    data[key] = list(filter(lambda i: i["amount"] is not None, item["storeProducts"]))
   return data
+
+def process_product(product, remainings):
+  for store in remainings:
+    available = store["amount"] - store["reserved"]
+    amount = product["QUANTITY"] if product["QUANTITY"] <= available else available
+    product["storeAmounts"].append({"store": store["storeId"], "amount": amount})
+    product["QUANTITY"] -= amount 
+  
