@@ -18,9 +18,16 @@ eapi = "https://eapi.pcloud.com/"
 token = "AT2fZ89VHkDT7OaQZMlMlVkZdslpGwQPJNbTKpnbvQtbO8yBYcny"
 headers = {"Authorization": f"Bearer {token}"}
 
-async def main():  
+async def main(deal):  
   async with httpx.AsyncClient() as client:
-
+    products = await get_products(client, deal)
+    remainings = await get_remaining_amounts(client, products)
+    remainings = filter_remainings(remainings)
+    for product in products:
+      product = process_product(product)
+    documents = await get_documents(client, products)
+    
+    
 
 async def get_products(client, deal):
   url = api + "crm.deal.productrows.get"
@@ -40,33 +47,26 @@ async def get_remaining_amounts(client, products):
   responses = response["result"]["result"]
   return responses
 
-async def create_documents(client, count):
-  url = api + "batch"
-  cmd = {}
-  for i in range(1, count):
-    cmd[i] = f"catalog.document.add?fields"
-  body = {"cmd": cmd}
-  response = await client.post(url, json=body)
-  response = response.json()
-  responses = response["result"]["result"]
-  return responses
-
-async def create_document(client):
+async def create_documents(client, products):
+  for product in products:
+    
+async def create_document(client, type):
   url = api + "catalog.document.add"
-  body = {"DOC_TYPE": "S", "RESPONSIBLE_ID": 1, "CURRENCY": "RUB", "DATE_DOCUMENT": date, "COMMENTARY":""}
+  body = {"docType": type, "responsibleId": 1, "currency": "RUB", "COMMENTARY":""}
   response = await client.post(url, json=body)
   response = response.json()
   
   return response["result"]["id"]
 
-async def add_products(client, products):
+async def add_products(client, products, documents):
   url = api + "batch" 
   cmd = {}
   for product in products:
     for store in product["storeAmounts"]:
-      fields = {"docId": store["document"], "storeTo": target_store, "elementId": product["PRODUCT_ID"], "amount": store["amount"], "purchasingPrice":1}
+      fields = {"docId": documents["M"], "storeTo": target_store, "elementId": product["PRODUCT_ID"], "amount": store["amount"], "purchasingPrice":1}
       if store["store"] != -1:
         fields["storeFrom"] = store["store"]
+        fields["docId"] = documents["S"]
       fields = get_fields_string(fields)
       cmd[f"{product["id"]}:{store["store"]}"] = f"catalog.document.element.add?{fields}"
   body = {"cmd": cmd}
@@ -79,6 +79,7 @@ def get_fields_string(fields):
   strings = []
   for field in fields.keys():
     strings.append(f"fields[{field}]={fields[field]}")
+    
   return "&".join(strings)
     
 def filter_remainings(data):
@@ -89,10 +90,28 @@ def filter_remainings(data):
 def process_product(product, remainings):
   for store in remainings:
     available = store["amount"] - store["reserved"]
-    amount = product["QUANTITY"] if product["QUANTITY"] <= available else available
-    product["storeAmounts"].append({"store": store["storeId"], "amount": amount})
-    product["QUANTITY"] -= amount 
+    if available:
+      amount = product["QUANTITY"] if product["QUANTITY"] <= available else available
+      product["storeAmounts"].append({"product": product["PRODUCT_ID"], "store": store["storeId"], "amount": amount, "document": "M"})
+      product["QUANTITY"] -= amount 
+      #incomeDocRequired = True
   if product["QUANTITY"] > 0:
-    product["storeAmounts"].append({"store": -1, "amount": product["QUANTITY"]})
+    product["storeAmounts"].append({"store": -1, "amount": product["QUANTITY"],  "document": "S"})
+    #transferDocRequired = True 
   return product 
+
+async def get_documents(client, products):
+  documents = {}
+  for product in products:
+    if find(lambda store: store == -1, product["storeAmounts"]) != -1:
+      document = await create_document(client, "S")
+      documents["S"] == document 
+    if find(lambda store: store != -1, product["storeAmounts"]) != -1:
+      document = await create_document(client, "S")
+      documents["M"] == document
+    if documents.keys():
+      break
+
+  return documents 
+
 
