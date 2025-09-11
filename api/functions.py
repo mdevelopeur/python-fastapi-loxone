@@ -13,6 +13,7 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path=".env.local")
 redis_url = os.getenv("REDIS_URL")
 api = os.getenv("api")
+target_store = 59
 eapi = "https://eapi.pcloud.com/"
 token = "AT2fZ89VHkDT7OaQZMlMlVkZdslpGwQPJNbTKpnbvQtbO8yBYcny"
 headers = {"Authorization": f"Bearer {token}"}
@@ -62,24 +63,12 @@ async def add_products(client, products):
   url = api + "batch" 
   cmd = {}
   for product in products:
-    fields = {"docId": product["doc"], "storeTo": store, "elementId": product["PRODUCT_ID"], "amount": product["QUANTITY"], "purchasingPrice":1}
-    if "storeFrom" in product:
-      fields["storeFrom"] = product["storeFrom"]
-    fields = get_fields_string(fields)
-    cmd[product["id"]] = f"catalog.document.element.add?{fields}"
-  body = {"cmd": cmd}
-  response = await client.post(url, json=body)
-  response = response.json()
-  responses = response["result"]["result"]
-  return responses
-
-async def transfer_products(client, document, products):
-  url = api + "batch" 
-  cmd = {}
-  for product in products:
-    fields = {"docId": document, "storeFrom": product"storeTo": store, "elementId": product["PRODUCT_ID"], "amount": product["QUANTITY"], "purchasingPrice":1}
-    fields = get_fields_string(fields)
-    cmd[product["id"]] = f"catalog.document.element.add?{fields}"
+    for store in product["storeAmounts"]:
+      fields = {"docId": store["document"], "storeTo": target_store, "elementId": product["PRODUCT_ID"], "amount": store["amount"], "purchasingPrice":1}
+      if store["store"] != -1:
+        fields["storeFrom"] = store["store"]
+      fields = get_fields_string(fields)
+      cmd[f"{product["id"]}:{store["store"]}"] = f"catalog.document.element.add?{fields}"
   body = {"cmd": cmd}
   response = await client.post(url, json=body)
   response = response.json()
@@ -103,4 +92,7 @@ def process_product(product, remainings):
     amount = product["QUANTITY"] if product["QUANTITY"] <= available else available
     product["storeAmounts"].append({"store": store["storeId"], "amount": amount})
     product["QUANTITY"] -= amount 
-  
+  if product["QUANTITY"] > 0:
+    product["storeAmounts"].append({"store": -1, "amount": product["QUANTITY"]})
+  return product 
+
