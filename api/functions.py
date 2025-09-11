@@ -92,4 +92,7 @@ def get_fields_string(fields):
     strings.append(f"fields[{field}]={fields[field]}")
   return "&".join(strings)
     
-    
+def filter_remaining(data):
+  for key in data.keys():
+    data[key] = list(filter(lambda i: i["amount"] is not None, item["storeFront"]))
+  return data
