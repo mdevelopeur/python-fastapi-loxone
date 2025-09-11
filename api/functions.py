@@ -58,14 +58,38 @@ async def create_document(client):
   
   return response["result"]["id"]
 
-async def add_products(client, document, products):
-  urjl = api + "batch"
+async def add_products(client, products):
+  url = api + "batch" 
   cmd = {}
   for product in products:
-    cmd[product["id"]] = f"catalog.document.element.add?fields"
+    fields = {"docId": product["doc"], "storeTo": store, "elementId": product["PRODUCT_ID"], "amount": product["QUANTITY"], "purchasingPrice":1}
+    if "storeFrom" in product:
+      fields["storeFrom"] = product["storeFrom"]
+    fields = get_fields_string(fields)
+    cmd[product["id"]] = f"catalog.document.element.add?{fields}"
+  body = {"cmd": cmd}
+  response = await client.post(url, json=body)
+  response = response.json()
+  responses = response["result"]["result"]
+  return responses
+
+async def transfer_products(client, document, products):
+  url = api + "batch" 
+  cmd = {}
+  for product in products:
+    fields = {"docId": document, "storeFrom": product"storeTo": store, "elementId": product["PRODUCT_ID"], "amount": product["QUANTITY"], "purchasingPrice":1}
+    fields = get_fields_string(fields)
+    cmd[product["id"]] = f"catalog.document.element.add?{fields}"
   body = {"cmd": cmd}
   response = await client.post(url, json=body)
   response = response.json()
   responses = response["result"]["result"]
   return responses
   
+def get_fields_string(fields):
+  strings = []
+  for field in fields.keys():
+    strings.append(f"fields[{field}]={fields[field]}")
+  return "&".join(strings)
+    
+    
