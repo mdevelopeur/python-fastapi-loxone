@@ -3,6 +3,3 @@ httpx
 dotenv
 packaging
 redis
-pandas
-openpyxl
-xlrd
