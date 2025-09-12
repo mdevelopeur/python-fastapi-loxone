@@ -47,12 +47,14 @@ async def get_remaining_amounts(client, products):
   response = await client.post(url, json=body)
   response = response.json()
   responses = response["result"]["result"]
+  print(type(responses))
   return responses
 
 async def create_documents(client, products):
   for product in products:
     ...
 async def create_document(client, type):
+  print("Creating document...")
   url = api + "catalog.document.add"
   body = {"docType": type, "responsibleId": 1, "currency": "RUB", "COMMENTARY":""}
   response = await client.post(url, json=body)
@@ -61,6 +63,7 @@ async def create_document(client, type):
   return response["result"]["id"]
 
 async def add_products(client, products, documents):
+  print("Adding products...")
   url = api + "batch" 
   cmd = {}
   for product in products:
@@ -91,6 +94,7 @@ def filter_remainings(data):
   return data
 
 def process_product(product, remainings):
+  print("Product: ", product["PRODUCT_ID")
   for store in remainings:
     available = store["amount"] - store["reserved"]
     if available:
@@ -121,6 +125,7 @@ async def get_documents(client, products):
   return documents 
 
 async def update_document(client, document, total):
+  print("Updating document...")
   url = api + "catalog.document.update"
   body = {"id": document, "fields": {"total": total}}
   response = await client.post(url, json=body)
@@ -129,6 +134,7 @@ async def update_document(client, document, total):
   return responses
 
 async def confirm_documents(client, documents):
+  print("Confirming...")
   url = api + "batch" 
   cmd = {}
   for document in documents.values():
