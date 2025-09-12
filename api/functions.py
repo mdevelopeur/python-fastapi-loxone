@@ -25,9 +25,11 @@ async def main(deal):
     remainings = filter_remainings(remainings)
     for product in products:
       product = process_product(product)
+    total = sum(list(map(lambda item: item["total"], products)))
     documents = await get_documents(client, products)
-    
-    
+    await add_products(client, products, documents)
+    await update_document(client, documents["S"], total)
+    await confirm_documents(client, documents)
 
 async def get_products(client, deal):
   url = api + "crm.deal.productrows.get"
@@ -97,7 +99,7 @@ def process_product(product, remainings):
       #incomeDocRequired = True
   if product["QUANTITY"] > 0:
     product["storeAmounts"].append({"store": -1, "amount": product["QUANTITY"],  "document": "S"})
-  product["total"] = product["QUANTITY"]
+  product["total"] = int(product["QUANTITY"])
     #transferDocRequired = True 
   return product 
 
@@ -117,4 +119,21 @@ async def get_documents(client, products):
 
   return documents 
 
+async def update_document(client, document, total):
+  url = api + "catalog.document.update"
+  body = {"id": document, "fields": {"total": total}}
+  response = await client.post(url, json=body)
+  response = response.json()
+  responses = response["result"]
+  return responses
 
+async def confirm_documents(client, documents):
+  url = api + "batch" 
+  cmd = {}
+  for document in documents.values():
+    cmd[document] = f".catalog.document.update?id={document}"
+  body = {"cmd": cmd}
+  response = await client.post(url, json=body)
+  response = response.json()
+  responses = response["result"]["result"]
+  return responses
