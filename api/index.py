@@ -13,17 +13,15 @@ async def update(request: Request):
     except Exception as e:
         print(e)
 
-@app.get('/api/clear_redis')
+@app.post('/api/hook')
 async def update(request: Request):
     try:
+        request = await request.data()
+        print(request)
+        return request 
         ...
         #await clear_redis()
     except Exception as e:
         print(e)
 
-@app.get('/api/deduplicate')
-async def update(request: Request):
-    try:
-        await deduplicate()
-    except Exception as e:
-        print(e)
+
