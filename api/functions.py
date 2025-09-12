@@ -75,6 +75,7 @@ async def add_products(client, products, documents):
   response = await client.post(url, json=body)
   response = response.json()
   responses = response["result"]["result"]
+  print(response)
   return responses
   
 def get_fields_string(fields):
