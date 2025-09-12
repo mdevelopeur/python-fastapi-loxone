@@ -51,7 +51,7 @@ async def get_remaining_amounts(client, products):
 
 async def create_documents(client, products):
   for product in products:
-    
+    ...
 async def create_document(client, type):
   url = api + "catalog.document.add"
   body = {"docType": type, "responsibleId": 1, "currency": "RUB", "COMMENTARY":""}
