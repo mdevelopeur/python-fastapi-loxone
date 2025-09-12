@@ -97,19 +97,22 @@ def process_product(product, remainings):
       #incomeDocRequired = True
   if product["QUANTITY"] > 0:
     product["storeAmounts"].append({"store": -1, "amount": product["QUANTITY"],  "document": "S"})
+  product["total"] = product["QUANTITY"]
     #transferDocRequired = True 
   return product 
 
 async def get_documents(client, products):
   documents = {}
   for product in products:
-    if find(lambda store: store == -1, product["storeAmounts"]) != -1:
-      document = await create_document(client, "S")
-      documents["S"] == document 
-    if find(lambda store: store != -1, product["storeAmounts"]) != -1:
-      document = await create_document(client, "S")
-      documents["M"] == document
-    if documents.keys():
+    if "S" not in documents:
+      if find(lambda store: store == -1, product["storeAmounts"]) != -1:     
+        document = await create_document(client, "S")
+        documents["S"] == document
+    if "M" not in documents:
+      if find(lambda store: store != -1, product["storeAmounts"]) != -1:
+        document = await create_document(client, "S")
+        documents["M"] == document
+    if len(documents.keys()) > 1:
       break
 
   return documents 
