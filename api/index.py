@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-import python-multipart
+import multipart
 from api.functions import main
 from urllib.parse import unquote, urlparse
 
