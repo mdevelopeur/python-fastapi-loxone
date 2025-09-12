@@ -16,8 +16,9 @@ async def update(request: Request):
 @app.post('/api/hook')
 async def update(request: Request):
     try:
-        request = await request.data()
-        print(request)
+        form = await request.form()
+        print(form)
+        await main(form['data[FIELDS][ID]'])
         return request 
         ...
         #await clear_redis()
