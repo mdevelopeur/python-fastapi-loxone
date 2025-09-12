@@ -94,7 +94,7 @@ def filter_remainings(data):
   return data
 
 def process_product(product, remainings):
-  print("Product: ", product["PRODUCT_ID")
+  print("Product: ", product["PRODUCT_ID"])
   for store in remainings:
     available = store["amount"] - store["reserved"]
     if available:
