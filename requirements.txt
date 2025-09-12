@@ -3,3 +3,4 @@ httpx
 dotenv
 packaging
 redis
+python-multipart
