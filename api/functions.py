@@ -144,3 +144,9 @@ async def confirm_documents(client, documents):
   response = response.json()
   responses = response["result"]["result"]
   return responses
+
+async def get_deal(client, id):
+  url = api + "crm.deal.get"
+  response = await client.get(url)
+  response = response.json()
+  return response["result"]
