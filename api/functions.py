@@ -19,7 +19,7 @@ token = "AT2fZ89VHkDT7OaQZMlMlVkZdslpGwQPJNbTKpnbvQtbO8yBYcny"
 headers = {"Authorization": f"Bearer {token}"}
 
 async def main(deal):  
-  async with httpx.AsyncClient() as client:
+  async with httpx.AsyncClient(timeout=None) as client:
     print(deal)
     status = await check_status(client, deal)
     print(status)
