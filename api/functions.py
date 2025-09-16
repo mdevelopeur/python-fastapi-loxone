@@ -47,7 +47,7 @@ async def get_remaining_amounts(client, products):
   url = api + "batch"
   cmd = {}
   for product in products:
-    cmd[product["id"]] = f"catalog.storeproduct.list?filter[productid]={product["id"]}&order[]=amount"
+    cmd[product["PRODUCT_ID"]] = f"catalog.storeproduct.list?filter[productid]={product["PRODUCT_ID"]}&order[]=amount"
   body = {"cmd": cmd}
   response = await client.post(url, json=body)
   response = response.json()
@@ -79,7 +79,7 @@ async def add_products(client, products, documents):
         fields["storeFrom"] = store["store"]
         fields["docId"] = documents["S"]
       fields = get_fields_string(fields)
-      cmd[f"{product["id"]}:{store["store"]}"] = f"catalog.document.element.add?{fields}"
+      cmd[f"{product["ID"]}:{store["store"]}"] = f"catalog.document.element.add?{fields}"
   body = {"cmd": cmd}
   response = await client.post(url, json=body)
   response = response.json()
