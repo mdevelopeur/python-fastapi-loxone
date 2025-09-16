@@ -104,8 +104,10 @@ def filter_remainings(data):
 def process_product(product, remainings):
   print("Product: ", product["PRODUCT_ID"])
   for store in remainings:
-    available = store["amount"] - store["quantityReserved"]
-    if available:
+    reserved = store["quantityReserved"]
+    
+    available = store["amount"] - reserved if reserved is not None else store["amount"]
+    if available is not None and available:
       amount = product["QUANTITY"] if product["QUANTITY"] <= available else available
       product["storeAmounts"].append({"product": product["PRODUCT_ID"], "store": store["storeId"], "amount": amount, "document": "M"})
       product["QUANTITY"] -= amount 
