@@ -96,7 +96,7 @@ def get_fields_string(fields):
     
 def filter_remainings(data):
   for key in data.keys():
-    data[key] = list(filter(lambda i: i["amount"] is not None, item["storeProducts"]))
+    data[key] = list(filter(lambda item: item["amount"] is not None, item["storeProducts"]))
   return data
 
 def process_product(product, remainings):
