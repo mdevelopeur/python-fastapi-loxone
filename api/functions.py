@@ -53,6 +53,7 @@ async def get_remaining_amounts(client, products):
   response = response.json()
   responses = response["result"]["result"]
   print(type(responses))
+  print(responses)
   return responses
 
 async def create_documents(client, products):
