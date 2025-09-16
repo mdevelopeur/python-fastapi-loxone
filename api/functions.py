@@ -21,6 +21,7 @@ headers = {"Authorization": f"Bearer {token}"}
 async def main(deal):  
   async with httpx.AsyncClient() as client:
     status = await check_status(client, deal)
+    print(status)
     if status:
       products = await get_products(client, deal)
       remainings = await get_remaining_amounts(client, products)
@@ -32,6 +33,8 @@ async def main(deal):
       await add_products(client, products, documents)
       await update_document(client, documents["S"], total)
       await confirm_documents(client, documents)
+    else: 
+      return {}
 
 async def get_products(client, deal):
   url = api + "crm.deal.productrows.get"
