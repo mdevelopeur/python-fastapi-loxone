@@ -61,7 +61,7 @@ async def create_document(client, type):
   body = {"docType": type, "responsibleId": 1, "currency": "RUB", "COMMENTARY":""}
   response = await client.post(url, json=body)
   response = response.json()
-  
+  print(response)
   return response["result"]["id"]
 
 async def add_products(client, products, documents):
@@ -153,6 +153,7 @@ async def check_status(client, id):
   body = {"id": id}
   response = await client.post(url, json=body)
   response = response.json()
+  print(response)
   category = response["result"]["CATEGORY_ID"]
   stage = response["result"]["STAGE_ID"]
   if statuses[category] == stage:
