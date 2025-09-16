@@ -77,10 +77,12 @@ async def add_products(client, products, documents):
   cmd = {}
   for product in products:
     for store in product["storeAmounts"]:
-      fields = {"docId": documents["M"], "storeTo": target_store, "elementId": product["PRODUCT_ID"], "amount": store["amount"], "purchasingPrice":1}
+      fields = {"storeTo": target_store, "elementId": product["PRODUCT_ID"], "amount": store["amount"], "purchasingPrice":1}
       if store["store"] != -1:
         fields["storeFrom"] = store["store"]
         fields["docId"] = documents["S"]
+      else:
+        fields["docId"] = documents["M"]
       fields = get_fields_string(fields)
       cmd[f"{product["ID"]}:{store["store"]}"] = f"catalog.document.element.add?{fields}"
   body = {"cmd": cmd}
@@ -129,7 +131,7 @@ async def get_documents(client, products):
         documents["S"] == document
     if "M" not in documents:
       if list(filter(lambda store: store["store"] != -1, product["storeAmounts"])):
-        document = await create_document(client, "S")
+        document = await create_document(client, "M")
         documents["M"] == document
     if len(documents.keys()) > 1:
       break
