@@ -103,6 +103,7 @@ def filter_remainings(data):
 
 def process_product(product, remainings):
   print("Product: ", product["PRODUCT_ID"])
+  product["storeAmounts"] = []
   for store in remainings:
     reserved = store["quantityReserved"]
     
