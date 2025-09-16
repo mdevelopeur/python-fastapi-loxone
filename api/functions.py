@@ -20,6 +20,7 @@ headers = {"Authorization": f"Bearer {token}"}
 
 async def main(deal):  
   async with httpx.AsyncClient() as client:
+    print(deal)
     status = await check_status(client, deal)
     print(status)
     if status:
@@ -154,6 +155,7 @@ async def check_status(client, id):
   statuses = {"0":"7", "4":"C4:UC_BZT361", "6":"C6:EXECUTING"}
   url = api + "crm.deal.get"
   body = {"id": id}
+  print(body)
   response = await client.post(url, json=body)
   response = response.json()
   print(response)
