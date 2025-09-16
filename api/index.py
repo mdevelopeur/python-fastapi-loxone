@@ -19,7 +19,7 @@ async def update(request: Request):
         data = await request.body()
         data = unquote(data.decode("utf-8"))
         print(data)
-        id = form['data[FIELDS][ID]']
+        id = re.findall("data\[FIELDS\]\[ID\]=(.\d+?)&", data)[0]
         print(id)
         await main(id)
         return request 
