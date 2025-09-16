@@ -150,7 +150,8 @@ async def confirm_documents(client, documents):
 async def check_status(client, id):
   statuses = {"0":"7", "4":"C4:UC_BZT361", "6":"C6:EXECUTING"}
   url = api + "crm.deal.get"
-  response = await client.get(url)
+  body = {"id": id}
+  response = await client.post(url, json=body)
   response = response.json()
   category = response["result"]["CATEGORY_ID"]
   stage = response["result"]["STAGE_ID"]
