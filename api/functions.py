@@ -129,10 +129,12 @@ async def get_documents(client, products):
       if list(filter(lambda store: store["store"] == -1, product["storeAmounts"])):     
         document = await create_document(client, "S")
         documents["S"] == document
+        print(documents)
     if "M" not in documents:
       if list(filter(lambda store: store["store"] != -1, product["storeAmounts"])):
         document = await create_document(client, "M")
         documents["M"] == document
+        print(documents)
     if len(documents.keys()) > 1:
       break
 
