@@ -27,7 +27,9 @@ async def main(deal):
       products = await get_products(client, deal)
       remainings = await get_remaining_amounts(client, products)
       remainings = filter_remainings(remainings)
+      print(products[0])
       for product in products:
+        
         product = process_product(product, remainings[product["PRODUCT_ID"]])
       total = sum(list(map(lambda item: item["total"], products)))
       documents = await get_documents(client, products)
@@ -35,6 +37,7 @@ async def main(deal):
       await update_document(client, documents["S"], total)
       await confirm_documents(client, documents)
     client.close()
+    
 async def get_products(client, deal):
   url = api + "crm.deal.productrows.get"
   body = {"id": deal}
