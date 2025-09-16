@@ -34,7 +34,8 @@ async def main(deal):
       total = sum(list(map(lambda item: item["total"], products)))
       documents = await get_documents(client, products)
       await add_products(client, products, documents)
-      await update_document(client, documents["S"], total)
+      if "S" in documents:
+        await update_document(client, documents["S"], total)
       await confirm_documents(client, documents)
     client.close()
     
@@ -156,7 +157,7 @@ async def confirm_documents(client, documents):
   url = api + "batch" 
   cmd = {}
   for document in documents.values():
-    cmd[document] = f".catalog.document.update?id={document}"
+    cmd[document] = f".catalog.document.confirm?id={document}"
   body = {"cmd": cmd}
   response = await client.post(url, json=body)
   response = response.json()
