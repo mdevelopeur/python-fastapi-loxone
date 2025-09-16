@@ -27,7 +27,7 @@ async def main(deal):
       products = await get_products(client, deal)
       remainings = await get_remaining_amounts(client, products)
       remainings = filter_remainings(remainings)
-      print(remainings[product["PRODUCT_ID"]])
+      print(remainings[products[0]["PRODUCT_ID"]])
       for product in products:
         
         product = process_product(product, remainings[product["PRODUCT_ID"]])
