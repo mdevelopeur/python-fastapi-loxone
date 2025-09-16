@@ -18,7 +18,9 @@ async def update(request: Request):
     try:
         form = await request.form()
         print(form)
-        await main(form['data[FIELDS][ID]'])
+        id = form['data[FIELDS][ID]']
+        print(id)
+        await main(id)
         return request 
         ...
         #await clear_redis()
