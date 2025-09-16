@@ -20,16 +20,18 @@ headers = {"Authorization": f"Bearer {token}"}
 
 async def main(deal):  
   async with httpx.AsyncClient() as client:
-    products = await get_products(client, deal)
-    remainings = await get_remaining_amounts(client, products)
-    remainings = filter_remainings(remainings)
-    for product in products:
-      product = process_product(product)
-    total = sum(list(map(lambda item: item["total"], products)))
-    documents = await get_documents(client, products)
-    await add_products(client, products, documents)
-    await update_document(client, documents["S"], total)
-    await confirm_documents(client, documents)
+    status = await check_status(client, deal)
+    if status:
+      products = await get_products(client, deal)
+      remainings = await get_remaining_amounts(client, products)
+      remainings = filter_remainings(remainings)
+      for product in products:
+        product = process_product(product)
+      total = sum(list(map(lambda item: item["total"], products)))
+      documents = await get_documents(client, products)
+      await add_products(client, products, documents)
+      await update_document(client, documents["S"], total)
+      await confirm_documents(client, documents)
 
 async def get_products(client, deal):
   url = api + "crm.deal.productrows.get"
@@ -145,8 +147,17 @@ async def confirm_documents(client, documents):
   responses = response["result"]["result"]
   return responses
 
-async def get_deal(client, id):
+async def check_status(client, id):
+  statuses = {"0":"7", "4":"C4:UC_BZT361", "6":"C6:EXECUTING"}
   url = api + "crm.deal.get"
   response = await client.get(url)
   response = response.json()
-  return response["result"]
+  category = response["result"]["CATEGORY_ID"]
+  stage = response["result"]["STAGE_ID"]
+  if statuses[category] == stage:
+    return True
+  else: 
+    return False
+  #return response["result"]
+
+#async def get_status(client, deal)
