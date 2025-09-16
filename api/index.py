@@ -16,8 +16,8 @@ async def update(request: Request):
 @app.post('/api/hook')
 async def update(request: Request):
     try:
-        form = await request.form()
-        print(form)
+        form = await request.body()
+        print(form.decode("utf-8"))
         id = form['data[FIELDS][ID]']
         print(id)
         await main(id)
