@@ -69,7 +69,7 @@ async def create_document(client, type):
   response = await client.post(url, json=body)
   response = response.json()
   print(response)
-  return response["result"]["id"]
+  return response["result"]["document"]["id"]
 
 async def add_products(client, products, documents):
   print("Adding products...")
