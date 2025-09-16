@@ -64,7 +64,8 @@ async def create_documents(client, products):
 async def create_document(client, type):
   print("Creating document...")
   url = api + "catalog.document.add"
-  body = {"docType": type, "responsibleId": 1, "currency": "RUB", "COMMENTARY":""}
+  fields = {"docType": type, "responsibleId": 1, "currency": "RUB", "COMMENTARY":""}
+  body = {"fields": fields}
   response = await client.post(url, json=body)
   response = response.json()
   print(response)
