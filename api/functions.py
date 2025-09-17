@@ -37,6 +37,7 @@ async def main(deal):
       if "S" in documents:
         ...
         #await update_document(client, documents["S"], total)
+      time.sleep(1)
       await confirm_documents(client, documents)
     client.close()
     
@@ -163,6 +164,7 @@ async def confirm_documents(client, documents):
   response = await client.post(url, json=body)
   response = response.json()
   responses = response["result"]["result"]
+  print(responses)
   return responses
 
 async def check_status(client, id):
