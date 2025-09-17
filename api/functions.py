@@ -35,7 +35,8 @@ async def main(deal):
       documents = await get_documents(client, products)
       await add_products(client, products, documents)
       if "S" in documents:
-        await update_document(client, documents["S"], total)
+        ...
+        #await update_document(client, documents["S"], total)
       await confirm_documents(client, documents)
     client.close()
     
