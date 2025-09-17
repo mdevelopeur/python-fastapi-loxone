@@ -78,7 +78,7 @@ async def add_products(client, products, documents):
   cmd = {}
   for product in products:
     for store in product["storeAmounts"]:
-      fields = {"storeTo": target_store, "elementId": product["PRODUCT_ID"], "amount": store["amount"], "purchasingPrice":1}
+      fields = {"storeTo": product["STORE_ID"], "elementId": product["PRODUCT_ID"], "amount": store["amount"], "purchasingPrice":1}
       if store["store"] == -1:
         print("-1: ", store)
         fields["storeFrom"] = store["store"]
