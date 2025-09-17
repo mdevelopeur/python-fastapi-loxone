@@ -37,7 +37,7 @@ async def main(deal):
       if "S" in documents:
         ...
         #await update_document(client, documents["S"], total)
-      time.sleep(10)
+      #time.sleep(10)
       await confirm_documents(client, documents)
     client.close()
     
@@ -159,7 +159,7 @@ async def confirm_documents(client, documents):
   url = api + "batch" 
   cmd = {}
   for document in documents.values():
-    cmd[document] = f".catalog.document.confirm?id={document}"
+    cmd[document] = f"catalog.document.confirm?id={document}"
   body = {"cmd": cmd}
   response = await client.post(url, json=body)
   response = response.json()
