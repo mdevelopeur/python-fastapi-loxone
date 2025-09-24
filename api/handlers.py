@@ -54,10 +54,10 @@ async def update():
   data = r.hgetall(timestamp)
   print(data)
   if data is not None:
-    
-    output = await set_password(data["password"])
-    r.delete(timestamp)
-    return output
+    if "password" in data:
+      output = await set_password(data["password"])
+      r.delete(timestamp)
+      return output
 
 async def set_password(password):
   url = f"http://62.152.24.120:51087/jdev/sps/updateuserpwdh/1f73ebbb-03c4-1e8c-ffff504f94a213c3/{password}"
