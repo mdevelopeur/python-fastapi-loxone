@@ -49,7 +49,7 @@ async def update():
   r = redis.Redis.from_url(redis_url, decode_responses=True)
   time = datetime.now()
   seconds = time.second
-  time = time - timedelta(seconds=seconds)
+  time = time - timedelta(seconds=seconds) - timedelta(hours=3)
   timestamp = "loxone:" + str(int(datetime.now().timestamp()))
   data = r.hgetall(timestamp)
   if data is not None:
