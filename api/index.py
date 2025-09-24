@@ -1,32 +1,29 @@
 from fastapi import FastAPI, Request
 import multipart
 import re
-from api.functions import main
+from api.handlers import set, update
 from urllib.parse import unquote, urlparse
 
 app = FastAPI()
 
 
+@app.get('/api/set')
+async def set(date: str, time: str):
+    try:
+        output = await set(f"{date} {time}")
+        print(output)
+        return output
+    except Exception as e:
+        print(e)
+        return e
+
 @app.get('/api/update')
 async def update(request: Request):
     try:
-        await main()
+        output = await update()
+        print(output)
+        return output 
     except Exception as e:
         print(e)
-
-@app.post('/api/hook')
-async def update(request: Request):
-    try:
-        data = await request.body()
-        data = unquote(data.decode("utf-8"))
-        print(data)
-        id = re.findall("data\[FIELDS\]\[ID\]=(.\d+?)&", data)[0]
-        print(id)
-        await main(id)
-        return request 
-        ...
-        #await clear_redis()
-    except Exception as e:
-        print(e)
-
+        return e
 
