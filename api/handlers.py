@@ -20,8 +20,12 @@ eapi = "https://eapi.pcloud.com/"
 token = "AT2fZ89VHkDT7OaQZMlMlVkZdslpGwQPJNbTKpnbvQtbO8yBYcny"
 headers = {"Authorization": f"Bearer {token}"}
 
-async def set(time):  
+async def set_time(time):  
   r = redis.Redis.from_url(redis_url, decode_responses=True)
   timestamp = datetime.strptime(time, "").timestamp()
   return timestamp
+
+
+async def update():
+  ...
   
