@@ -25,6 +25,7 @@ headers = {"Authorization": f"Bearer admin:{password}"}
 async def set_time(time):  
   print(time)
   r = redis.Redis.from_url(redis_url, decode_responses=True)
+  print("redis connected")
   password = generate_password()
   print(password)
   time = datetime.strptime(time, "%d.%m.%Y %H:%M") 
