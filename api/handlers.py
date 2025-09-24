@@ -12,6 +12,7 @@ import string
 import random 
 from dotenv import load_dotenv
 
+load_dotenv(dotenv_path=".env")
 password = os.getenv("password")
 default_password = os.getenv("default_password")
 load_dotenv(dotenv_path=".env.local")
@@ -45,6 +46,7 @@ async def set_time(time):
 
 
 async def update():
+  r = redis.Redis.from_url(redis_url, decode_responses=True)
   time = datetime.now()
   seconds = time.second
   time = time - timedelta(seconds=seconds)
@@ -64,3 +66,9 @@ async def set_password(password):
 def generate_password():
   password = ''.join(secrets.choice(string.digits) for i in range(10))
   return password
+
+async def clear_keys():
+  r = redis.Redis.from_url(redis_url, decode_responses=True)
+  for key in r.scan_iter("loxone:*"):
+    # delete the key
+    r.delete(key)
