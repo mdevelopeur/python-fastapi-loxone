@@ -8,7 +8,7 @@ app = FastAPI()
 
 
 @app.get('/api/set_time')
-async def set_time(date: str, time: str):
+async def set_time_handler(date: str, time: str):
     try:
         output = await set_time(f"{date} {time}")
         print(output)
