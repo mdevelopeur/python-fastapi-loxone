@@ -26,7 +26,7 @@ async def set_time(time):
   print(time)
   r = redis.Redis.from_url(redis_url, decode_responses=True)
   password = generate_password()
-  time = datetime.strptime(time, "") 
+  time = datetime.strptime(time, "%d.%m.%Y %H:%M") 
   seconds = time.seconds()
   time = time - timedelta(seconds=seconds)
   timestamp = "loxone:" + str(int(time.timestamp()))
