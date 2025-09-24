@@ -42,7 +42,7 @@ async def set_time(time):
   print(timestamp)
   r.hset(timestamp, mapping={"password": default_password})
   
-  return password 
+  return int(password)
 
 
 async def update():
