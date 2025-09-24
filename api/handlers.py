@@ -63,6 +63,7 @@ async def set_password(password):
   url = f"http://62.152.24.120:51087/jdev/sps/updateuserpwdh/1f73ebbb-03c4-1e8c-ffff504f94a213c3/{password}"
   async with httpx.AsyncClient() as client:
     response = await client.get(url, headers=headers)
+    print(response.json())
     return response
 
 def generate_password():
