@@ -27,7 +27,7 @@ async def set_time(time):
   r = redis.Redis.from_url(redis_url, decode_responses=True)
   password = generate_password()
   time = datetime.strptime(time, "%d.%m.%Y %H:%M") 
-  seconds = time.seconds()
+  seconds = time.getSeconds()
   time = time - timedelta(seconds=seconds)
   timestamp = "loxone:" + str(int(time.timestamp()))
   r.hset(timestamp, mapping={"password": password})
@@ -40,7 +40,7 @@ async def set_time(time):
 
 async def update():
   time = datetime.now()
-  seconds = time.seconds()
+  seconds = time.getSeconds()
   time = time - timedelta(seconds=seconds)
   timestamp = "loxone:" + str(int(datetime.now().timestamp()))
   data = r.hgetall(timestamp)
