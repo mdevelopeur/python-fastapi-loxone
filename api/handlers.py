@@ -1,5 +1,5 @@
 from urllib.parse import unquote
-from datetime import datetime
+from datetime import datetime, timedelta
 import httpx
 import re
 import math
@@ -25,17 +25,22 @@ headers = {"Authorization": f"Bearer admin:{password}"}
 async def set_time(time):  
   r = redis.Redis.from_url(redis_url, decode_responses=True)
   password = generate_password()
-  time = datetime.strptime(time, "")
-  timestamp = "loxone:" + str(int(time.timestamp()))[0:7]
+  time = datetime.strptime(time, "") 
+  seconds = time.seconds()
+  time = time - timedelta(seconds=seconds)
+  timestamp = "loxone:" + str(int(time.timestamp()))
   r.hset(timestamp, mapping={"password": password})
-  time = time + timedelta(hours=1)
-  timestamp = "loxone:" + str(int(time.timestamp()))[0:7]
+  time = time + timedelta(minutes=10)
+  timestamp = "loxone:" + str(int(time.timestamp()))
   r.hset(timestamp, mapping={"password": default_password})
   
   return password 
 
 
 async def update():
+  time = datetime.now()
+  seconds = time.seconds()
+  time = time - timedelta(seconds=seconds)
   timestamp = "loxone:" + str(int(datetime.now().timestamp()))
   data = r.hgetall(timestamp)
   if data is not None:
