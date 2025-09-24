@@ -52,7 +52,7 @@ async def update():
   seconds = time.second
   time = time - timedelta(seconds=seconds) + timedelta(hours=3)
   print(time)
-  timestamp = "loxone:" + str(int(datetime.now().timestamp()))
+  timestamp = "loxone:" + str(int(time.timestamp()))
   print(timestamp)
   data = r.hgetall(timestamp)
   print(data)
