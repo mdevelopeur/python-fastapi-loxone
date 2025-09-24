@@ -45,13 +45,14 @@ async def update():
   data = r.hgetall(timestamp)
   if data is not None:
     output = await set_password(data.password)
+    r.del(timestamp)
     return output
 
 async def set_password(password):
-  url = 
+  url = f"http://62.152.24.120:51087/jdev/sps/updateuserpwdh/1f73ebbb-03c4-1e8c-ffff504f94a213c3/{password}"
   async with httpx.AsyncClient() as client:
-    output = await client.get(url, headers=headers)
-    return output
+    response = await client.get(url, headers=headers)
+    return response
 
 def generate_password():
   password = ''.join(secrets.choice(string.digits) for i in range(10))
