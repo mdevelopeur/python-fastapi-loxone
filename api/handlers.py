@@ -46,7 +46,7 @@ async def update():
   data = r.hgetall(timestamp)
   if data is not None:
     output = await set_password(data.password)
-    r.del(timestamp)
+    r.delete(timestamp)
     return output
 
 async def set_password(password):
