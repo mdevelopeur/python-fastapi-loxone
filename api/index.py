@@ -10,7 +10,7 @@ app = FastAPI()
 @app.get('/api/set_time')
 async def set_time(date: str, time: str):
     try:
-        output = await set(f"{date} {time}")
+        output = await set_time(f"{date} {time}")
         print(output)
         return output
     except Exception as e:
