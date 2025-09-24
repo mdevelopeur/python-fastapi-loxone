@@ -51,6 +51,7 @@ async def update():
   seconds = time.second
   time = time - timedelta(seconds=seconds) + timedelta(hours=3)
   timestamp = "loxone:" + str(int(datetime.now().timestamp()))
+  print(timestamp)
   data = r.hgetall(timestamp)
   print(data)
   if data is not None:
