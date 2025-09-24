@@ -59,7 +59,8 @@ async def update():
   if data is not None:
     if "password" in data:
       output = await set_password(data["password"])
-      r.delete(timestamp)
+      result = r.delete(timestamp)
+      print(result)
       return output
 
 async def set_password(password):
@@ -67,7 +68,8 @@ async def set_password(password):
   auth = httpx.BasicAuth(username="admin", password=admin_password)
   async with httpx.AsyncClient() as client:
     response = await client.get(url, auth=auth)
-    print(response.json())
+    response = response.json()
+    print(response)
     return response
 
 def generate_password():
