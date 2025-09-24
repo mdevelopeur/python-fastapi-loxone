@@ -13,7 +13,7 @@ import random
 from dotenv import load_dotenv
 
 load_dotenv(dotenv_path=".env")
-password = os.getenv("password")
+admin_password = os.getenv("password")
 default_password = os.getenv("default_password")
 load_dotenv(dotenv_path=".env.local")
 redis_url = os.getenv("REDIS_URL")
@@ -64,8 +64,9 @@ async def update():
 
 async def set_password(password):
   url = f"http://62.152.24.120:51087/jdev/sps/updateuserpwdh/1f73ebbb-03c4-1e8c-ffff504f94a213c3/{password}"
+  auth = httpx.BasicAuth(username="admin", password=admin_password)
   async with httpx.AsyncClient() as client:
-    response = await client.get(url, headers=headers)
+    response = await client.get(url, auth=auth)
     print(response.json())
     return response
 
