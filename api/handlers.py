@@ -23,6 +23,7 @@ token = "AT2fZ89VHkDT7OaQZMlMlVkZdslpGwQPJNbTKpnbvQtbO8yBYcny"
 headers = {"Authorization": f"Bearer admin:{password}"}
 
 async def set_time(time):  
+  print(datetime.now())
   print(time)
   r = redis.Redis.from_url(redis_url, decode_responses=True)
   print(redis_url)
@@ -33,9 +34,11 @@ async def set_time(time):
   time = time - timedelta(seconds=seconds)
   print(time)
   timestamp = "loxone:" + str(int(time.timestamp()))
-  r.hset(timestamp, mapping={"password": password})
+  result = r.hset(timestamp, mapping={"password": password})
+  print(result)
   time = time + timedelta(minutes=10)
   timestamp = "loxone:" + str(int(time.timestamp()))
+  print(timestamp)
   r.hset(timestamp, mapping={"password": default_password})
   
   return password 
