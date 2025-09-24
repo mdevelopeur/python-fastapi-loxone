@@ -22,10 +22,26 @@ headers = {"Authorization": f"Bearer {token}"}
 
 async def set_time(time):  
   r = redis.Redis.from_url(redis_url, decode_responses=True)
-  timestamp = datetime.strptime(time, "").timestamp()
-  return timestamp
+  password = generate_password()
+  time = datetime.strptime(time, "")
+  timestamp = "loxone:" + str(int(time.timestamp()))[0:7]
+  r.hset(timestamp, mapping={"password": password})
+  time = time + timedelta(hours=1)
+  timestamp = "loxone:" + str(int(time.timestamp()))[0:7]
+  r.hset(timestamp, mapping={"password": default_password})
+  
+  return password 
 
 
 async def update():
-  ...
-  
+  timestamp = "loxone:" + str(int(datetime.now().timestamp()))
+  data = r.hgetall(timestamp)
+  if data is not None:
+    output = await set_password(data.password)
+    return output
+
+async def set_password(password):
+  url = 
+  async with httpx.AsyncClient() as client:
+    output = await client.get(url, headers=headers)
+    return output
