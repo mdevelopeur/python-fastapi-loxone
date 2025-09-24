@@ -23,6 +23,7 @@ token = "AT2fZ89VHkDT7OaQZMlMlVkZdslpGwQPJNbTKpnbvQtbO8yBYcny"
 headers = {"Authorization": f"Bearer admin:{password}"}
 
 async def set_time(time):  
+  print(time)
   r = redis.Redis.from_url(redis_url, decode_responses=True)
   password = generate_password()
   time = datetime.strptime(time, "") 
