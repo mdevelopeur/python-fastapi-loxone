@@ -52,7 +52,9 @@ async def update():
   time = time - timedelta(seconds=seconds) + timedelta(hours=3)
   timestamp = "loxone:" + str(int(datetime.now().timestamp()))
   data = r.hgetall(timestamp)
+  print(data)
   if data is not None:
+    
     output = await set_password(data["password"])
     r.delete(timestamp)
     return output
