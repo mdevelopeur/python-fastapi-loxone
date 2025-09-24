@@ -18,7 +18,7 @@ async def set_time(date: str, time: str):
         return e
 
 @app.get('/api/update')
-async def update(request: Request):
+async def update_handler():
     try:
         output = await update()
         print(output)
