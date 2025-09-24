@@ -35,7 +35,7 @@ async def set_time(time):
   time = time - timedelta(seconds=seconds)
   print(time)
   timestamp = "loxone:" + str(int(time.timestamp()))
-  result = r.hset(timestamp, mapping={"password": password})
+  result = r.hset(timestamp, mapping={"password": str(password)})
   print(result)
   time = time + timedelta(minutes=10)
   timestamp = "loxone:" + str(int(time.timestamp()))
@@ -53,7 +53,7 @@ async def update():
   timestamp = "loxone:" + str(int(datetime.now().timestamp()))
   data = r.hgetall(timestamp)
   if data is not None:
-    output = await set_password(data.password)
+    output = await set_password(data["password"])
     r.delete(timestamp)
     return output
 
