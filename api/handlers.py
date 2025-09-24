@@ -25,4 +25,3 @@ async def set(time):
   timestamp = datetime.strptime(time, "").timestamp()
   return timestamp
   
-  async with httpx.AsyncClient() as client:
