@@ -21,7 +21,7 @@ api = os.getenv("api")
 target_store = 59
 eapi = "https://eapi.pcloud.com/"
 token = "AT2fZ89VHkDT7OaQZMlMlVkZdslpGwQPJNbTKpnbvQtbO8yBYcny"
-headers = {"Authorization": f"Bearer admin:{password}"}
+#headers = {"Authorization": f"Bearer admin:{password}"}
 
 async def set_time(time):  
   print(datetime.now())
