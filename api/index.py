@@ -41,7 +41,7 @@ async def clear_keys_handler():
 async def hash(password: str, hash_algorithm: str, salt: str):
     try:
         output = hash_password(password, hash_algorithm, salt)
-        print(output)
+        print("result: ", output)
         return output 
     except Exception as e:
         print(e)
