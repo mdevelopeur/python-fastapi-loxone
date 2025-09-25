@@ -84,10 +84,10 @@ async def clear_keys():
     r.delete(key)
 
 def hash_password(password, hash_algorithm, salt):
-  if hash_algorithm == ‘SHA256’:
-    hashed_password = hashlib.sha256(f’{password}:{salt}‘.encode()).hexdigest().upper()
-  elif hash_algorithm == ‘SHA512’:
-    hashed_password = hashlib.sha512(f’{password}:{salt}‘.encode()).hexdigest().upper()
+  if hash_algorithm == 'SHA256':
+    hashed_password = hashlib.sha256(f"{password}:{salt}".encode()).hexdigest().upper()
+  elif hash_algorithm == 'SHA512':
+    hashed_password = hashlib.sha512(f"{password}:{salt}".encode()).hexdigest().upper()
   else:
     raise Exception('Unsupported hash algorithm.')
     return hashed_password
