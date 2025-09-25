@@ -90,4 +90,4 @@ def hash_password(password, hash_algorithm, salt):
     hashed_password = hashlib.sha512(f"{password}:{salt}".encode()).hexdigest().upper()
   else:
     raise Exception('Unsupported hash algorithm.')
-    return hashed_password
+  return hashed_password
