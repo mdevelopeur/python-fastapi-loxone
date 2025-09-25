@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 import multipart
 import re
-from api.handlers import set_time, update, clear_keys
+from api.handlers import set_time, update, clear_keys, hash_password
 from urllib.parse import unquote, urlparse
 
 app = FastAPI()
@@ -31,6 +31,16 @@ async def update_handler():
 async def clear_keys_handler():
     try:
         output = await clear_keys()
+        print(output)
+        return output 
+    except Exception as e:
+        print(e)
+        return e
+
+@app.get('/api/hash')
+async def hash(password: str, hash_algorithm: str, salt: str):
+    try:
+        output = hash_password(password, hash_algorithm, salt)
         print(output)
         return output 
     except Exception as e:
