@@ -10,6 +10,7 @@ import redis
 import secrets
 import string
 import random 
+import hashlib
 from dotenv import load_dotenv
 
 load_dotenv(dotenv_path=".env")
@@ -81,3 +82,12 @@ async def clear_keys():
   for key in r.scan_iter("loxone:*"):
     # delete the key
     r.delete(key)
+
+def hash_password(password, hash_algorithm, salt):
+  if hash_algorithm == ‘SHA256’:
+    hashed_password = hashlib.sha256(f’{password}:{salt}‘.encode()).hexdigest().upper()
+  elif hash_algorithm == ‘SHA512’:
+    hashed_password = hashlib.sha512(f’{password}:{salt}‘.encode()).hexdigest().upper()
+  else:
+    raise Exception('Unsupported hash algorithm.')
+    return hashed_password
