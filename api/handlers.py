@@ -106,7 +106,7 @@ def hash_password(password, hash_algorithm, salt):
   return hashed_password
 
 async def reboot(client):
-  url = "http://62.152.24.120:51087/dev/sys/reboot"
+  url = "http://62.152.24.120:51087/jdev/sys/reboot"
   response = await client.get(url, auth=auth)
   response = response.json()
   return response 
