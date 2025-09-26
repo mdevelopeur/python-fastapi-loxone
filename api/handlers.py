@@ -22,6 +22,7 @@ api = os.getenv("api")
 target_store = 59
 eapi = "https://eapi.pcloud.com/"
 token = "AT2fZ89VHkDT7OaQZMlMlVkZdslpGwQPJNbTKpnbvQtbO8yBYcny"
+auth = httpx.BasicAuth(username="admin", password=admin_password)
 #headers = {"Authorization": f"Bearer admin:{password}"}
 
 async def set_time(time):  
@@ -59,19 +60,20 @@ async def update():
   print(data)
   if data is not None:
     if "password" in data:
-      output = await set_password(data["password"])
-      result = r.delete(timestamp)
-      print(result)
-      return output
+      async with httpx.AsyncClient() as client:
+        hashing_data = await get_hashing_data(client)
+        password = hash_password(password, hashing_data["salt"], hashing_data["hashAlg"]
+        output = await set_password(client, password)
+        result = r.delete(timestamp)
+        print(result)
+        return output
 
-async def set_password(password):
+async def set_password(client, password):
   url = f"http://62.152.24.120:51087/jdev/sps/updateuserpwdh/1f73ebbb-03c4-1e8c-ffff504f94a213c3/{password}"
-  auth = httpx.BasicAuth(username="admin", password=admin_password)
-  async with httpx.AsyncClient() as client:
-    response = await client.get(url, auth=auth)
-    response = response.json()
-    print(response)
-    return response
+  response = await client.get(url, auth=auth)
+  response = response.json()
+  print(response)
+  return response
 
 def generate_password():
   password = ''.join(secrets.choice(string.digits) for i in range(10))
@@ -83,6 +85,13 @@ async def clear_keys():
     # delete the key
     r.delete(key)
 
+async def get_hashing_data(client):
+  url = f"http://62.152.24.120:51087/jdev/sys/getKey2?User1"
+  response = await client.get(url, auth=auth)
+  response = response.json()
+  print(response)
+  return response["LL"]["value"]
+  
 def hash_password(password, hash_algorithm, salt):
   if hash_algorithm == 'SHA256':
     hashed_password = hashlib.sha256(f"{password}:{salt}".encode()).hexdigest().upper()
