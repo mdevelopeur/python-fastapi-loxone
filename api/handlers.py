@@ -61,7 +61,7 @@ async def update():
   if data is not None:
     if "password" in data:
       async with httpx.AsyncClient() as client:
-        hashing_data = await get_hashing_data(client, "getKey2")
+        hashing_data = await get_hashing_data(client, "getkey2")
         password = hash_password(data["password"], hashing_data["hashAlg"], hashing_data["salt"])
         output = await set_password(client, password, "updateuserpwdh")
         hashing_data = await get_hashing_data(client, "getvisusalt")
