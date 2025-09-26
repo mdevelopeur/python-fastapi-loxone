@@ -62,7 +62,7 @@ async def update():
     if "password" in data:
       async with httpx.AsyncClient() as client:
         hashing_data = await get_hashing_data(client)
-        password = hash_password(password, hashing_data["hashAlg"], hashing_data["salt"])
+        password = hash_password(data["password"], hashing_data["hashAlg"], hashing_data["salt"])
         output = await set_password(client, password)
         result = r.delete(timestamp)
         print(result)
