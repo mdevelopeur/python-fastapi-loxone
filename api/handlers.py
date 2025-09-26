@@ -39,7 +39,7 @@ async def set_time(time):
   timestamp = "loxone:" + str(int(time.timestamp()))
   result = r.hset(timestamp, mapping={"password": str(password)})
   print(result)
-  time = time + timedelta(minutes=10)
+  time = time + timedelta(minutes=59)
   timestamp = "loxone:" + str(int(time.timestamp()))
   print(timestamp)
   r.hset(timestamp, mapping={"password": default_password})
