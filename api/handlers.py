@@ -61,15 +61,18 @@ async def update():
   if data is not None:
     if "password" in data:
       async with httpx.AsyncClient() as client:
-        hashing_data = await get_hashing_data(client)
+        hashing_data = await get_hashing_data(client, "getKey2")
         password = hash_password(data["password"], hashing_data["hashAlg"], hashing_data["salt"])
-        output = await set_password(client, password)
+        output = await set_password(client, password, "updateuserpwdh")
+        hashing_data = await get_hashing_data(client, "getvisusalt")
+        password = hash_password(data["password"], hashing_data["hashAlg"], hashing_data["salt"])
+        output = await set_password(client, password, "updateuservisupwdh")
         result = r.delete(timestamp)
         print(result)
         return output
 
-async def set_password(client, password):
-  url = f"http://62.152.24.120:51087/jdev/sps/updateuserpwdh/1f73ebbb-03c4-1e8c-ffff504f94a213c3/{password}"
+async def set_password(client, password, type):
+  url = f"http://62.152.24.120:51087/jdev/sps/{type}/1f6eba0a-0382-5c01-ffffa13734b4be2f/{password}"
   response = await client.get(url, auth=auth)
   response = response.json()
   print(response)
@@ -85,8 +88,8 @@ async def clear_keys():
     # delete the key
     r.delete(key)
 
-async def get_hashing_data(client):
-  url = f"http://62.152.24.120:51087/jdev/sys/getKey2?User1"
+async def get_hashing_data(client, type):
+  url = f"http://62.152.24.120:51087/jdev/sys/{type}/User1"
   response = await client.get(url, auth=auth)
   response = response.json()
   print(response)
@@ -100,3 +103,4 @@ def hash_password(password, hash_algorithm, salt):
   else:
     raise Exception('Unsupported hash algorithm.')
   return hashed_password
+
