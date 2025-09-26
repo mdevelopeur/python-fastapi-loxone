@@ -67,6 +67,7 @@ async def update():
         hashing_data = await get_hashing_data(client, "getvisusalt")
         password = hash_password(data["password"], hashing_data["hashAlg"], hashing_data["salt"])
         output = await set_password(client, password, "updateuservisupwdh")
+        await reboot(client)
         result = r.delete(timestamp)
         print(result)
         return output
@@ -104,3 +105,8 @@ def hash_password(password, hash_algorithm, salt):
     raise Exception('Unsupported hash algorithm.')
   return hashed_password
 
+async def reboot(client):
+  url = "http://62.152.24.120:51087/dev/sys/reboot"
+  response = await client.get(url, auth=auth)
+  response = response.json()
+  return response 
