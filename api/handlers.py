@@ -93,7 +93,7 @@ async def update_password():
       output = await set_password(client, password, "updateuservisupwdh")
       await reboot(client)
       #result = r.delete(timestamp)
-      print(result)
+      #print(result)
       print(password)
       print(output)
       return output
