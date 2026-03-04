@@ -63,20 +63,20 @@ async def update():
     
     if data is not None:
       if "password" in data:
-      async with httpx.AsyncClient() as client:
-        try:
-          hashing_data = await get_hashing_data(client, "getkey2")
-          password = hash_password(data["password"], hashing_data["hashAlg"], hashing_data["salt"])
-          output = await set_password(client, password, "updateuserpwdh")
-          hashing_data = await get_hashing_data(client, "getvisusalt")
-          password = hash_password(data["password"], hashing_data["hashAlg"], hashing_data["salt"])
-          output = await set_password(client, password, "updateuservisupwdh")
-          await reboot(client)
-          result = r.delete(timestamp)
-          print(result)
-          return output
-        except Exception as e:
-           print(e)
+        async with httpx.AsyncClient() as client:
+          try:
+            hashing_data = await get_hashing_data(client, "getkey2")
+            password = hash_password(data["password"], hashing_data["hashAlg"], hashing_data["salt"])
+            output = await set_password(client, password, "updateuserpwdh")
+            hashing_data = await get_hashing_data(client, "getvisusalt")
+            password = hash_password(data["password"], hashing_data["hashAlg"], hashing_data["salt"])
+            output = await set_password(client, password, "updateuservisupwdh")
+            await reboot(client)
+            result = r.delete(timestamp)
+            print(result)
+            return output
+          except Exception as e:
+            print(e)
   except Exception as e:
     print(e)
 
