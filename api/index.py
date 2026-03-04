@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 import multipart
 import re
-from api.handlers import set_time, update, clear_keys, hash_password
+from api.handlers import set_time, update, update_password, clear_keys, hash_password
 from urllib.parse import unquote, urlparse
 
 app = FastAPI()
@@ -26,7 +26,17 @@ async def update_handler():
     except Exception as e:
         print(e)
         return e
-
+        
+@app.get('/api/update_password')
+async def update_password_handler():
+    try:
+        output = await update_password()
+        print(output)
+        return output 
+    except Exception as e:
+        print(e)
+        return e
+        
 @app.get('/api/clear_keys')
 async def clear_keys_handler():
     try:
