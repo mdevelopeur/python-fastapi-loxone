@@ -80,6 +80,25 @@ async def update():
   except Exception as e:
     print(e)
 
+async def update_password():
+  async with httpx.AsyncClient() as client:
+    try:
+      password = generate_password()
+      hashing_data = await get_hashing_data(client, "getkey2")
+      hashed_password = hash_password(password, hashing_data["hashAlg"], hashing_data["salt"])
+      output = await set_password(client, password, "updateuserpwdh")
+      hashing_data = await get_hashing_data(client, "getvisusalt")
+      hashed_password = hash_password(password, hashing_data["hashAlg"], hashing_data["salt"])
+      output = await set_password(client, password, "updateuservisupwdh")
+      await reboot(client)
+      result = r.delete(timestamp)
+      print(result)
+      print(password)
+      print(output)
+      return output
+    except Exception as e:
+      print(e)
+      
 async def set_password(client, password, type):
   url = f"http://62.152.24.120:51087/jdev/sps/{type}/1f6eba0a-0382-5c01-ffffa13734b4be2f/{password}"
   response = await client.get(url, auth=auth)
