@@ -89,7 +89,7 @@ async def update_password():
       hashed_password = hash_password(password, "SHA256", hashing_data["salt"])
       output = await set_password(client, password, "updateuserpwdh")
       hashing_data = await get_hashing_data(client, "getvisusalt")
-      hashed_password = hash_password(password, hashing_data["hashAlg"], hashing_data["salt"])
+      hashed_password = hash_password(password, "SHA256", hashing_data["salt"])#hashing_data["hashAlg"]
       output = await set_password(client, password, "updateuservisupwdh")
       await reboot(client)
       #result = r.delete(timestamp)
