@@ -25,51 +25,60 @@ auth = httpx.BasicAuth(username="admin", password=admin_password)
 #headers = {"Authorization": f"Bearer admin:{password}"}
 
 async def set_time(time):  
-  print(datetime.now())
-  print(time)
-  r = redis.Redis.from_url(redis_url, decode_responses=True)
-  print(redis_url)
-  password = generate_password()
-  print(password)
-  time = datetime.strptime(time, "%d.%m.%Y %H:%M") 
-  seconds = time.second
-  time = time - timedelta(seconds=seconds)
-  print(time)
-  timestamp = "loxone:" + str(int(time.timestamp()))
-  result = r.hset(timestamp, mapping={"password": str(password)})
-  print(result)
-  time = time + timedelta(minutes=59)
-  timestamp = "loxone:" + str(int(time.timestamp()))
-  print(timestamp)
-  r.hset(timestamp, mapping={"password": default_password})
+  try:
+    print(datetime.now())
+    print(time)
+    r = redis.Redis.from_url(redis_url, decode_responses=True)
+    print(redis_url)
+    password = generate_password()
+    print(password)
+    time = datetime.strptime(time, "%d.%m.%Y %H:%M") 
+    seconds = time.second
+    time = time - timedelta(seconds=seconds)
+    print(time)
+    timestamp = "loxone:" + str(int(time.timestamp()))
+    result = r.hset(timestamp, mapping={"password": str(password)})
+    print(result)
+    time = time + timedelta(minutes=59)
+    timestamp = "loxone:" + str(int(time.timestamp()))
+    print(timestamp)
+    r.hset(timestamp, mapping={"password": default_password})
   
-  return password
-
+    return password
+  except Exception as e:
+    print(e)
 
 async def update():
-  r = redis.Redis.from_url(redis_url, decode_responses=True)
-  time = datetime.now()
-  print(time)
-  seconds = time.second
-  time = time - timedelta(seconds=seconds) + timedelta(hours=3)
-  print(time)
-  timestamp = "loxone:" + str(int(time.timestamp()))
-  print(timestamp)
-  data = r.hgetall(timestamp)
-  print(data)
-  if data is not None:
-    if "password" in data:
+  try:
+    r = redis.Redis.from_url(redis_url, decode_responses=True)
+    time = datetime.now()
+    print(time)
+    seconds = time.second
+    time = time - timedelta(seconds=seconds) + timedelta(hours=3)
+    print(time)
+    timestamp = "loxone:" + str(int(time.timestamp()))
+    print(timestamp)
+    data = r.hgetall(timestamp)
+    print(data)
+    
+    if data is not None:
+      if "password" in data:
       async with httpx.AsyncClient() as client:
-        hashing_data = await get_hashing_data(client, "getkey2")
-        password = hash_password(data["password"], hashing_data["hashAlg"], hashing_data["salt"])
-        output = await set_password(client, password, "updateuserpwdh")
-        hashing_data = await get_hashing_data(client, "getvisusalt")
-        password = hash_password(data["password"], hashing_data["hashAlg"], hashing_data["salt"])
-        output = await set_password(client, password, "updateuservisupwdh")
-        await reboot(client)
-        result = r.delete(timestamp)
-        print(result)
-        return output
+        try:
+          hashing_data = await get_hashing_data(client, "getkey2")
+          password = hash_password(data["password"], hashing_data["hashAlg"], hashing_data["salt"])
+          output = await set_password(client, password, "updateuserpwdh")
+          hashing_data = await get_hashing_data(client, "getvisusalt")
+          password = hash_password(data["password"], hashing_data["hashAlg"], hashing_data["salt"])
+          output = await set_password(client, password, "updateuservisupwdh")
+          await reboot(client)
+          result = r.delete(timestamp)
+          print(result)
+          return output
+        except Exception as e:
+           print(e)
+  except Exception as e:
+    print(e)
 
 async def set_password(client, password, type):
   url = f"http://62.152.24.120:51087/jdev/sps/{type}/1f6eba0a-0382-5c01-ffffa13734b4be2f/{password}"
