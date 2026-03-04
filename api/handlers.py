@@ -85,7 +85,8 @@ async def update_password():
     try:
       password = generate_password()
       hashing_data = await get_hashing_data(client, "getkey2")
-      hashed_password = hash_password(password, hashing_data["hashAlg"], hashing_data["salt"])
+      print(hashing_data)
+      hashed_password = hash_password(password, "SHA256", hashing_data["salt"])
       output = await set_password(client, password, "updateuserpwdh")
       hashing_data = await get_hashing_data(client, "getvisusalt")
       hashed_password = hash_password(password, hashing_data["hashAlg"], hashing_data["salt"])
